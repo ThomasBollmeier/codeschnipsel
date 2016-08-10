@@ -1,0 +1,13 @@
+{
+	
+	"name": "tbollmeier/codeschnipsel",
+	"version": "0.1.0",
+	"description": "An application to manage code snippets",
+
+	"autoload": {
+        	"psr-4": {
+            		"tbollmeier\\codeschnipsel\\": "app/"
+        	}
+    	}	
+	
+}

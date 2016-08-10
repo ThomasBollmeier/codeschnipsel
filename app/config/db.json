@@ -1,0 +1,8 @@
+{
+    "type": "mysql",
+    "host": "localhost",
+    "dbname": "codeschnipsel",
+    "charset": "utf8",
+    "user": "codeschnipsel",
+    "password": "test1234"
+}
