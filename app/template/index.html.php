@@ -31,6 +31,7 @@ $mainContent
         <title>Codeschnipsel</title>
         <link rel="stylesheet" href="/codeschnipsel/css/bootstrap.min.css">
         <link rel="stylesheet" href="/codeschnipsel/css/codeschnipsel.css">
+        <link rel="stylesheet" href="/codeschnipsel/css/codemirror/codemirror.css">
     </head>
     <body>
         
@@ -87,6 +88,9 @@ $mainContent
                 </div><!--/.navbar-collapse -->
             </div>
         </nav>
+
+        <script src="/codeschnipsel/js/codemirror/codemirror.js"></script>
+        <script src="/codeschnipsel/js/codemirror/mode/javascript/javascript.js"></script>
 
         <?= $mainContent ?>
     

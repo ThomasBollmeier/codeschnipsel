@@ -46,6 +46,11 @@ $router->registerAction(
     '/codeschnipsel/snippets/:snippet_id',
     'Snippet.index'
 );
+$router->registerAction(
+    'GET',
+    '/codeschnipsel/new-snippet',
+    'Snippet.index'
+);
 
 $router->registerAction(
     'POST',

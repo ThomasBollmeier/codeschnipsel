@@ -59,7 +59,7 @@ abstract class Model
         $dbName = isset($this->dbNames[$name]) ?
             $this->dbNames[$name] : $name;
 
-        if ($this->row && isset($this->row[$dbName])) {
+        if (isset($this->row[$dbName])) {
             return $this->row[$dbName];
         } else {
             return null;
@@ -71,9 +71,7 @@ abstract class Model
         $dbName = isset($this->dbNames[$name]) ?
             $this->dbNames[$name] : $name;
 
-        if ($this->row && isset($this->row[$dbName])) {
-            $this->row[$dbName] = $value;
-        }
+        $this->row[$dbName] = $value;
     }
 
     function load(\PDO $dbConn)

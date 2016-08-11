@@ -33,7 +33,7 @@ class Snippet
 
     public function index($data)
     {
-        $id = $data['snippet_id'];
+        $id = isset($data['snippet_id']) ? $data['snippet_id'] : core\Model::INDEX_NOT_IN_DB;
 
         $session = core\Session::getInstance();
         $dbConn = Configuration::getInstance()->getDbConnection();
@@ -52,7 +52,12 @@ class Snippet
     private function getSnippetDetailHtml($dbConn, $id)
     {
         $snippet = new SnippetModel($id);
-        $snippet->load($dbConn);
+
+        if ($id != core\Model::INDEX_NOT_IN_DB) {
+            $snippet->load($dbConn);
+        } else {
+            $snippet->title = "&lt;ohne Titel&gt;";
+        }
 
         $template = new core\Template('snippet_detail.html.php');
 
