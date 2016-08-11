@@ -49,6 +49,16 @@ class Snippet
 
     }
 
+    public function create($data)
+    {
+        echo "Creating new snippet...";
+    }
+
+    public function update($data)
+    {
+        echo "Updating snippet ${data['snippet_id']}...";
+    }
+
     private function getSnippetDetailHtml($dbConn, $id)
     {
         $snippet = new SnippetModel($id);

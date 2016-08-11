@@ -62,6 +62,16 @@ $router->registerAction(
     '/codeschnipsel/signout',
     'Home.signout'
 );
+$router->registerAction(
+    'POST',
+    '/codeschnipsel/snippets',
+    'Snippet.create'
+);
+$router->registerAction(
+    'POST',
+    '/codeschnipsel/snippets/:snippet_id',
+    'Snippet.update'
+);
 
 
 $router->route($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
