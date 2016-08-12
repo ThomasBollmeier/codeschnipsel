@@ -51,12 +51,31 @@ class Snippet
 
     public function create($data)
     {
-        echo "Creating new snippet...";
+        $session = core\Session::getInstance();
+        $dbConn = Configuration::getInstance()->getDbConnection();
+
+        $snippet = new SnippetModel();
+        $snippet->title = $_POST['title'];
+        $snippet->authorId = $session->currentUser->getId();
+        $snippet->code = $_POST['code'];
+
+        $snippet->save($dbConn);
+
+        $this->index(['snippet_id' => $snippet->getId()]);
     }
 
     public function update($data)
     {
-        echo "Updating snippet ${data['snippet_id']}...";
+        $snippet = new SnippetModel($data['snippet_id']);
+        $dbConn = Configuration::getInstance()->getDbConnection();
+
+        $snippet->title = $_POST['title'];
+        $snippet->code = $_POST['code'];
+
+        $snippet->save($dbConn);
+
+        $this->index(['snippet_id' => $snippet->getId()]);
+
     }
 
     private function getSnippetDetailHtml($dbConn, $id)
@@ -64,14 +83,27 @@ class Snippet
         $snippet = new SnippetModel($id);
 
         if ($id != core\Model::INDEX_NOT_IN_DB) {
+            $action = "/codeschnipsel/snippets/". $id;
             $snippet->load($dbConn);
         } else {
-            $snippet->title = "&lt;ohne Titel&gt;";
+            $action = "/codeschnipsel/snippets";
+            $snippet->title = "";
         }
 
         $template = new core\Template('snippet_detail.html.php');
 
-        return $template->getHtml(['snippet' => $snippet]);
+        return $template->getHtml([
+            'title' => $snippet->title,
+            'code' => $snippet->code, //$this->escapeCode($snippet->code),
+            'action' => $action
+        ]);
+    }
+
+    private function escapeCode($code)
+    {
+        $result = str_replace('"', '\\"', $code);
+        $result = str_replace("\n", "\\n", $result);
+        return $result;
     }
 
 }

@@ -87,11 +87,6 @@ class User extends Model
 		return $this === $currentUser;
 	}
 
-	public function load(\PDO $dbConn)
-    {
-        // TODO: Implement load() method.
-    }
-
     public function save(\PDO $dbConn)
     {
         if ($this->id == -1) {

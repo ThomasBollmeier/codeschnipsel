@@ -28,7 +28,7 @@ abstract class Model
 
     public function __construct(int $id=-1)
     {
-        $this->id = $id;
+        $this->id = intval($id);
         $this->tableName = '';
         $this->row = [];
         $this->dbNames = [];

@@ -64,7 +64,42 @@ SQL;
 
     public function save(\PDO $dbConn)
     {
-        // TODO: Implement save() method.
+        if ($this->id == Model::INDEX_NOT_IN_DB) {
+
+            $sql = <<<SQL
+INSERT INTO snippets 
+  (title, author_id, code)
+VALUES
+  (:title, :author_id, :code)
+SQL;
+
+            $stmnt = $dbConn->prepare($sql);
+            $stmnt->bindParam(':title', $this->title);
+            $stmnt->bindParam(':author_id', $this->authorId, \PDO::PARAM_INT);
+            $stmnt->bindParam(':code', $this->code);
+
+        } else {
+
+            $sql = <<<SQL
+UPDATE snippets SET
+  title = :title,
+  code = :code
+WHERE
+  id = :id
+SQL;
+            $stmnt = $dbConn->prepare($sql);
+            $stmnt->bindParam(':title', $this->title);
+            $stmnt->bindParam(':code', $this->code);
+            $stmnt->bindParam(':id', $this->id, \PDO::PARAM_INT);
+
+        }
+
+        $stmnt->execute();
+
+        if ($this->id == Model::INDEX_NOT_IN_DB) {
+            $this->id = $dbConn->lastInsertId();
+        }
+
     }
 
 }
