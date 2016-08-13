@@ -20,31 +20,36 @@ namespace tbollmeier\codeschnipsel\controller;
 use tbollmeier\codeschnipsel\core as core;
 use tbollmeier\codeschnipsel\model\User;
 use tbollmeier\codeschnipsel\model\Snippet;
+use tbollmeier\codeschnipsel\view\Main;
 use tbollmeier\codeschnipsel\config\Configuration;
 
 
 class Home
 {
-    private $template;
 
-    public function __construct()
+    public function index($data=[])
     {
-        $this->template = new core\Template('index.html.php');
-    }
-
-    public function index($data)
-    {
-        $session = core\Session::getInstance();
+        $user = core\Session::getInstance()->currentUser;
         $dbConn = Configuration::getInstance()->getDbConnection();
 
-        $mainContent = !$session->currentUser ?
-            $template = (new core\Template('welcome.html.php'))->getHtml() :
-            $this->getSnippetOverviewHtml($dbConn, $session->currentUser);
+        $view = new Main($user);
 
-        echo $this->template->getHtml([
-            'currentUser' => $session->currentUser,
-            'mainContent' => $mainContent
-        ]);
+        if ($user) {
+            $view->setContent($this->getSnippetOverviewHtml($dbConn, $user));
+            $view->setScripts($this->getScripts());
+        }
+
+        $view->render();
+    }
+
+    public function delete($data)
+    {
+        $snippet = new Snippet($data['snippet_id']);
+        $dbConn = Configuration::getInstance()->getDbConnection();
+        $snippet->delete($dbConn);
+
+        $this->index();
+
     }
 
     public function signin($data)
@@ -71,14 +76,14 @@ class Home
             break;
         }
 
-        $this->index([]);
+        $this->index();
     }
 
     public function signout($data)
     {
         core\Session::deleteInstance();
 
-        $this->index([]);
+        $this->index();
     }
 
     private function getSnippetOverviewHtml($dbConn, $author)
@@ -89,6 +94,13 @@ class Home
 
         return $template->getHtml(['snippets' => $snippets]);
 
+    }
+
+    public function getScripts()
+    {
+        $template = new core\Template('snippets_overview_js.html.php');
+
+        return $template->getHtml();
     }
 
 }

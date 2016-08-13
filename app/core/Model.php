@@ -91,6 +91,22 @@ abstract class Model
         $stmt->closeCursor();
     }
 
+    function delete(\PDO $dbConn)
+    {
+        if ($this->id == self::INDEX_NOT_IN_DB) {
+            return;
+        }
+
+        $sql = 'DELETE FROM '.$this->tableName.' WHERE id = :id';
+        $stmt = $dbConn->prepare($sql);
+        $stmt->bindParam(':id', $this->id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        $this->row = [];
+        $this->id = self::INDEX_NOT_IN_DB;
+
+    }
+
     abstract function save(\PDO $dbConn);
 
 }

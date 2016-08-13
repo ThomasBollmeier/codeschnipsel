@@ -29,9 +29,10 @@ $mainContent
     <head lang="de">
         <meta charset="utf-8">
         <title>Codeschnipsel</title>
-        <link rel="stylesheet" href="/codeschnipsel/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/codeschnipsel/css/bootstrap-slate.min.css">
         <link rel="stylesheet" href="/codeschnipsel/css/codeschnipsel.css">
         <link rel="stylesheet" href="/codeschnipsel/css/codemirror/codemirror.css">
+        <link rel="stylesheet" href="/codeschnipsel/css/codemirror/theme/monokai.css">
     </head>
     <body>
         
@@ -96,6 +97,9 @@ $mainContent
     
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="/codeschnipsel/js/bootstrap.min.js"></script>
+        <script src="/codeschnipsel/js/codeschnipsel.js"></script>
+
+        <?= $scripts ?>
     
     </body>
 </html>

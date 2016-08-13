@@ -1,3 +1,10 @@
 .cs-username {
     font-size: larger;
 }
+
+.cs-title-input {
+    font-family: "Courier New", Courier;
+    font-size: larger;
+    color: white;
+    background-color: black;
+}

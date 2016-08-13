@@ -20,32 +20,27 @@ namespace tbollmeier\codeschnipsel\controller;
 use tbollmeier\codeschnipsel\core as core;
 use tbollmeier\codeschnipsel\config\Configuration;
 use tbollmeier\codeschnipsel\model\Snippet as SnippetModel;
+use tbollmeier\codeschnipsel\view\Main;
 
 
 class Snippet
 {
-    private $template;
-
-    public function __construct()
-    {
-        $this->template = new core\Template('index.html.php');
-    }
 
     public function index($data)
     {
         $id = isset($data['snippet_id']) ? $data['snippet_id'] : core\Model::INDEX_NOT_IN_DB;
 
-        $session = core\Session::getInstance();
+        $user = core\Session::getInstance()->currentUser;
         $dbConn = Configuration::getInstance()->getDbConnection();
 
-        $mainContent = !$session->currentUser ?
-            $template = (new core\Template('welcome.html.php'))->getHtml() :
-            $this->getSnippetDetailHtml($dbConn, $id);
+        $view = new Main($user);
 
-        echo $this->template->getHtml([
-            'currentUser' => $session->currentUser,
-            'mainContent' => $mainContent
-        ]);
+        if ($user) {
+            $html = $this->getSnippetDetailHtml($dbConn, $id);
+            $view->setContent($html);
+        }
+
+        $view->render();
 
     }
 
@@ -88,22 +83,16 @@ class Snippet
         } else {
             $action = "/codeschnipsel/snippets";
             $snippet->title = "";
+            $snippet->code = "";
         }
 
         $template = new core\Template('snippet_detail.html.php');
 
         return $template->getHtml([
             'title' => $snippet->title,
-            'code' => $snippet->code, //$this->escapeCode($snippet->code),
+            'code' => $snippet->code,
             'action' => $action
         ]);
-    }
-
-    private function escapeCode($code)
-    {
-        $result = str_replace('"', '\\"', $code);
-        $result = str_replace("\n", "\\n", $result);
-        return $result;
     }
 
 }

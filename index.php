@@ -51,6 +51,11 @@ $router->registerAction(
     '/codeschnipsel/new-snippet',
     'Snippet.index'
 );
+$router->registerAction(
+    'GET',
+    '/codeschnipsel/snippets/delete/:snippet_id',
+    'Home.delete'
+);
 
 $router->registerAction(
     'POST',
@@ -75,10 +80,4 @@ $router->registerAction(
 
 
 $router->route($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
-
-/*
-use tbollmeier\codeschnipsel\model\User;
-$user = User::create('entwickler@tbollmeier.de', 'test1234', 'drbolle');
-$user->save(Configuration::getInstance()->getDbConnection());
-*/
 
