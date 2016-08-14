@@ -8,6 +8,8 @@
 
 namespace tbollmeier\codeschnipsel\db;
 
+use tbollmeier\codeschnipsel\model\Language;
+
 
 class Database
 {
@@ -53,6 +55,28 @@ CREATE TABLE IF NOT EXISTS `snippets` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 SQL;
         $conn->exec($sql);
+
+        self::setLanguages($conn);
+
+    }
+
+    private static function setLanguages(\PDO $dbConn)
+    {
+
+        $lang = new Language('C/C++');
+        $lang->save($dbConn);
+        $lang = new Language('Clojure');
+        $lang->save($dbConn);
+        $lang = new Language('JavaScript');
+        $lang->save($dbConn);
+        $lang = new Language('PHP');
+        $lang->save($dbConn);
+        $lang = new Language('Python');
+        $lang->save($dbConn);
+        $lang = new Language('Ruby');
+        $lang->save($dbConn);
+        $lang = new Language('Haskell');
+        $lang->save($dbConn);
 
     }
 

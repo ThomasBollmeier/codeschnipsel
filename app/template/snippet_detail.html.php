@@ -11,6 +11,19 @@
                    placeholder="Dein Titel">
         </div>
         <div class="form-group">
+            <select id="language"
+                    name="language"
+                    class="selectpicker">
+                <option>--- Sprache unbekannt ---</option>
+                <?php foreach ($languages as $language) {
+                    if ($language->name == $snippetLang) {?>
+                        <option selected><?= $language->name ?></option>
+                <?php } else { ?>
+                <option><?= $language->name ?></option>
+                <?php } } ?>
+            </select>
+        </div>
+        <div class="form-group">
                 <textarea id="editor"
                           name="code"
                           rows="20"
@@ -21,11 +34,3 @@
         </div>
     </form>
 </div>
-
-<script>
-    var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
-        lineNumbers: true,
-        mode: "javascript",
-        theme: "monokai"
-    });
-</script>

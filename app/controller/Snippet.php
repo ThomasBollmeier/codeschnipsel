@@ -20,6 +20,7 @@ namespace tbollmeier\codeschnipsel\controller;
 use tbollmeier\codeschnipsel\core as core;
 use tbollmeier\codeschnipsel\config\Configuration;
 use tbollmeier\codeschnipsel\model\Snippet as SnippetModel;
+use tbollmeier\codeschnipsel\model\Language;
 use tbollmeier\codeschnipsel\view\Main;
 
 
@@ -38,6 +39,8 @@ class Snippet
         if ($user) {
             $html = $this->getSnippetDetailHtml($dbConn, $id);
             $view->setContent($html);
+            $html = $this->getSnippetDetailScript();
+            $view->setScripts($html);
         }
 
         $view->render();
@@ -53,6 +56,7 @@ class Snippet
         $snippet->title = $_POST['title'];
         $snippet->authorId = $session->currentUser->getId();
         $snippet->code = $_POST['code'];
+        $snippet->setLanguage($dbConn, $_POST['language']);
 
         $snippet->save($dbConn);
 
@@ -66,6 +70,7 @@ class Snippet
 
         $snippet->title = $_POST['title'];
         $snippet->code = $_POST['code'];
+        $snippet->setLanguage($dbConn, $_POST['language']);
 
         $snippet->save($dbConn);
 
@@ -86,13 +91,25 @@ class Snippet
             $snippet->code = "";
         }
 
+        $languages = Language::getAll($dbConn);
+        $snippetLang = $snippet->getLanguage($dbConn);
+
         $template = new core\Template('snippet_detail.html.php');
 
         return $template->getHtml([
             'title' => $snippet->title,
             'code' => $snippet->code,
-            'action' => $action
+            'action' => $action,
+            'languages' => $languages,
+            'snippetLang' => $snippetLang
         ]);
+    }
+
+    private function getSnippetDetailScript()
+    {
+        $template = new core\Template('snippet_detail_js.html.php');
+
+        return $template->getHtml();
     }
 
 }

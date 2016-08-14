@@ -22,20 +22,68 @@ use tbollmeier\codeschnipsel\core\Model;
 
 class Language extends Model
 {
-
-    public function __construct($id=-1)
+    public static function getAll(\PDO $dbConn)
     {
-        parent::__construct($id);
+        $languages = [];
+
+        $sql = "SELECT * FROM languages";
+        $stmt = $dbConn->prepare($sql);
+        $stmt->execute();
+
+        $row = $stmt->fetch();
+        while ($row) {
+            $language = new Language('', $row['id']);
+            $language->setRowData($row);
+            $languages[] = $language;
+            $row = $stmt->fetch();
+        }
+
+        $stmt->closeCursor();
+
+        return $languages;
     }
 
-    public function load(\PDO $dbConn)
+    public function __construct($name='', $id=-1)
     {
-        // TODO: Implement load() method.
+        parent::__construct($id);
+
+        $this->setTableName('languages');
+        $this->name = $name;
     }
 
     public function save(\PDO $dbConn)
     {
-        // TODO: Implement save() method.
+        if ($this->id == Model::INDEX_NOT_IN_DB) {
+
+            $sql = <<<SQL
+INSERT INTO languages
+  (name)
+VALUES
+  (:name)
+SQL;
+            $stmnt = $dbConn->prepare($sql);
+            $stmnt->bindParam(':name', $this->name);
+
+        } else {
+
+            $sql = <<<SQL
+UPDATE languages SET
+  name = :name
+WHERE
+  id = :id
+SQL;
+            $stmnt = $dbConn->prepare($sql);
+            $stmnt->bindParam(':name', $this->name);
+            $stmnt->bindParam(':id', $this->id, \PDO::PARAM_INT);
+
+        }
+
+        $stmnt->execute();
+
+        if ($this->id == Model::INDEX_NOT_IN_DB) {
+            $this->id = $dbConn->lastInsertId();
+        }
+
     }
 
 }

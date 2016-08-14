@@ -30,6 +30,7 @@ $mainContent
         <meta charset="utf-8">
         <title>Codeschnipsel</title>
         <link rel="stylesheet" href="/codeschnipsel/css/bootstrap-slate.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
         <link rel="stylesheet" href="/codeschnipsel/css/codeschnipsel.css">
         <link rel="stylesheet" href="/codeschnipsel/css/codemirror/codemirror.css">
         <link rel="stylesheet" href="/codeschnipsel/css/codemirror/theme/monokai.css">
@@ -91,12 +92,18 @@ $mainContent
         </nav>
 
         <script src="/codeschnipsel/js/codemirror/codemirror.js"></script>
+        <script src="/codeschnipsel/js/codemirror/mode/clike/clike.js"></script>
+        <script src="/codeschnipsel/js/codemirror/mode/clojure/clojure.js"></script>
         <script src="/codeschnipsel/js/codemirror/mode/javascript/javascript.js"></script>
+        <script src="/codeschnipsel/js/codemirror/mode/php/php.js"></script>
+        <script src="/codeschnipsel/js/codemirror/mode/python/python.js"></script>
+        <script src="/codeschnipsel/js/codemirror/mode/ruby/ruby.js"></script>
 
         <?= $mainContent ?>
     
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="/codeschnipsel/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
         <script src="/codeschnipsel/js/codeschnipsel.js"></script>
 
         <?= $scripts ?>
