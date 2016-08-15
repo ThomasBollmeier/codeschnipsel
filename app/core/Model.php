@@ -44,9 +44,9 @@ abstract class Model
         $this->tableName = $tableName;
     }
 
-    protected function setDbAlias($name, $dbName)
+    protected function setDbField($name, $dbName='')
     {
-        $this->dbNames[$name] = $dbName;
+        $this->dbNames[$name] = empty($dbName) ? $name : $dbName;
     }
 
     protected function setRowData($row)

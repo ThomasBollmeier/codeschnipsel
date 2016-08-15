@@ -92,7 +92,10 @@ class Home
 
         $template = new core\Template('snippets_overview.html.php');
 
-        return $template->getHtml(['snippets' => $snippets]);
+        return $template->getHtml([
+            'baseUrl' => Configuration::getInstance()->getBaseUrl(),
+            'snippets' => $snippets
+        ]);
 
     }
 

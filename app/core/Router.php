@@ -25,15 +25,22 @@ class Router
     private $controllerNS;
     private $defaultCtrl;
     private $defaultAction;
+    private $baseUrl;
 
-    public function __construct($controllerNS = '',
-                                $defaultCtrlAction='Index.index')
+    public function __construct($options)
     {
-        $this->controllerNS = $controllerNS;
+        $this->controllerNS = $this->getOption($options, 'controllerNS', '');
+        $defaultCtrlAction = $this->getOption($options, 'defaultCtrlAction', 'Index.index');
         list($defaultCtrl, $defaultAction) = explode('.', $defaultCtrlAction);
-        $this->defaultCtrl = $controllerNS . '\\' . $defaultCtrl;
+        $this->defaultCtrl = $this->controllerNS . '\\' . $defaultCtrl;
         $this->defaultAction = $defaultAction;
+        $this->baseUrl = $this->getOption($options, 'baseUrl', '');
         $this->handlers = [];
+    }
+
+    private function getOption($opts, $name, $default=null)
+    {
+        return isset($opts[$name]) ? $opts[$name] : $default;
     }
 
     public function route($method, $url)
@@ -65,7 +72,9 @@ class Router
                                    $controllerAction)
     {
         list($controller, $action) = explode('.', $controllerAction);
-        list($pattern, $params) = $this->parserRoute($route);
+
+        $route = '/' . trim($this->baseUrl, '/') . '/' . ltrim($route, '/');
+        list($pattern, $params) = $this->parseRoute($route);
 
         $handlers = $this->handlers[$method];
         $handlers[] = [$pattern, $params, $controller, $action];
@@ -73,7 +82,7 @@ class Router
 
     }
 
-    private function parserRoute($route)
+    private function parseRoute($route)
     {
         $segments = [];
         $pattern = '';

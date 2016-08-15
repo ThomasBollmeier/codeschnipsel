@@ -22,62 +22,62 @@ use tbollmeier\codeschnipsel\core as core;
 use tbollmeier\codeschnipsel\config\Configuration;
 
 
-function initDb(Session $session)
+function initDb(Configuration $config, Session $session)
 {
     $initialized = $session->get('initialized', false);
 
     if (!$initialized) {
-
-        $config = Configuration::getInstance();
         db\Database::setup($config->getDbConnection());
-
         $session->initialized = true;
     }
 }
 
-initDb(Session::getInstance());
+$config = Configuration::getInstance();
 
-$router = new core\Router(
-    'tbollmeier\\codeschnipsel\\controller',
-    'Home.index');
+initDb($config, Session::getInstance());
+
+$router = new core\Router([
+    'controllerNS' => 'tbollmeier\\codeschnipsel\\controller',
+    'defaultCtrlAction' => 'Home.index',
+    'baseUrl' => $config->getBaseUrl()
+]);
 
 $router->registerAction(
     'GET',
-    '/codeschnipsel/snippets/:snippet_id',
+    'snippets/:snippet_id',
     'Snippet.index'
 );
 $router->registerAction(
     'GET',
-    '/codeschnipsel/new-snippet',
+    'new-snippet',
     'Snippet.index'
 );
 $router->registerAction(
     'GET',
-    '/codeschnipsel/snippets/delete/:snippet_id',
+    'snippets/delete/:snippet_id',
     'Home.delete'
 );
 
 $router->registerAction(
     'POST',
-    '/codeschnipsel/signin',
+    'signin',
     'Home.signin'
 );
 $router->registerAction(
     'POST',
-    '/codeschnipsel/signout',
+    'signout',
     'Home.signout'
 );
 $router->registerAction(
     'POST',
-    '/codeschnipsel/snippets',
+    'snippets',
     'Snippet.create'
 );
 $router->registerAction(
     'POST',
-    '/codeschnipsel/snippets/:snippet_id',
+    'snippets/:snippet_id',
     'Snippet.update'
 );
-
 
 $router->route($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 

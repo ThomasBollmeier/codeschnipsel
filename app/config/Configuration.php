@@ -23,9 +23,11 @@ use tbollmeier\codeschnipsel\core\db\Connector;
 class Configuration
 {
     const DB_CONFIG_FILE = __DIR__ . DIRECTORY_SEPARATOR . 'db.json';
+    const SITE_CONFIG_FILE = __DIR__ . DIRECTORY_SEPARATOR . 'site.json';
 
     private static $instance= null;
     private $dbConn = null;
+    private $baseUrl = null;
 
     public static function getInstance()
     {
@@ -44,6 +46,22 @@ class Configuration
         }
 
         return $this->dbConn;
+    }
+
+    public function getBaseUrl()
+    {
+        if ($this->baseUrl === null) {
+            $content = file_get_contents(self::SITE_CONFIG_FILE);
+            $convertIntoAssoc = true;
+            $siteOptions = json_decode($content, $convertIntoAssoc);
+            $url = $siteOptions['baseUrl'];
+            if (!empty($url)) {
+                $url = '/' . trim($url, '/');
+            }
+            $this->baseUrl = $url;
+        }
+
+        return $this->baseUrl;
     }
 
 }

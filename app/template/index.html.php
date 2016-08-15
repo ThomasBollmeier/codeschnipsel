@@ -17,8 +17,10 @@
 
 /* Variables used in template:
 
+$baseUrl
 $currentUser
 $mainContent
+$scripts
 
 */
 
@@ -29,11 +31,11 @@ $mainContent
     <head lang="de">
         <meta charset="utf-8">
         <title>Codeschnipsel</title>
-        <link rel="stylesheet" href="/codeschnipsel/css/bootstrap-slate.min.css">
+        <link rel="stylesheet" href="<?= $baseUrl ?>/css/bootstrap-slate.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
-        <link rel="stylesheet" href="/codeschnipsel/css/codeschnipsel.css">
-        <link rel="stylesheet" href="/codeschnipsel/css/codemirror/codemirror.css">
-        <link rel="stylesheet" href="/codeschnipsel/css/codemirror/theme/monokai.css">
+        <link rel="stylesheet" href="<?= $baseUrl ?>/css<?= $baseUrl ?>.css">
+        <link rel="stylesheet" href="<?= $baseUrl ?>/css/codemirror/codemirror.css">
+        <link rel="stylesheet" href="<?= $baseUrl ?>/css/codemirror/theme/monokai.css">
     </head>
     <body>
         
@@ -51,12 +53,12 @@ $mainContent
                        <span class="icon-bar"></span>
                        <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/codeschnipsel">Codeschnipsel</a>
+                    <a class="navbar-brand" href="<?= $baseUrl ?>">Codeschnipsel</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <form class="navbar-form navbar-right"
                           method="post"
-                          action=<?= $currentUser ? "/codeschnipsel/signout" : "/codeschnipsel/signin"?> >
+                          action=<?= $currentUser ? "$baseUrl/signout" : "$baseUrl/signin"?> >
                         
                         <?php if (!$currentUser): ?>
                     
@@ -91,20 +93,20 @@ $mainContent
             </div>
         </nav>
 
-        <script src="/codeschnipsel/js/codemirror/codemirror.js"></script>
-        <script src="/codeschnipsel/js/codemirror/mode/clike/clike.js"></script>
-        <script src="/codeschnipsel/js/codemirror/mode/clojure/clojure.js"></script>
-        <script src="/codeschnipsel/js/codemirror/mode/javascript/javascript.js"></script>
-        <script src="/codeschnipsel/js/codemirror/mode/php/php.js"></script>
-        <script src="/codeschnipsel/js/codemirror/mode/python/python.js"></script>
-        <script src="/codeschnipsel/js/codemirror/mode/ruby/ruby.js"></script>
+        <script src="<?= $baseUrl ?>/js/codemirror/codemirror.js"></script>
+        <script src="<?= $baseUrl ?>/js/codemirror/mode/clike/clike.js"></script>
+        <script src="<?= $baseUrl ?>/js/codemirror/mode/clojure/clojure.js"></script>
+        <script src="<?= $baseUrl ?>/js/codemirror/mode/javascript/javascript.js"></script>
+        <script src="<?= $baseUrl ?>/js/codemirror/mode/php/php.js"></script>
+        <script src="<?= $baseUrl ?>/js/codemirror/mode/python/python.js"></script>
+        <script src="<?= $baseUrl ?>/js/codemirror/mode/ruby/ruby.js"></script>
 
         <?= $mainContent ?>
     
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="/codeschnipsel/js/bootstrap.min.js"></script>
+        <script src="<?= $baseUrl ?>/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
-        <script src="/codeschnipsel/js/codeschnipsel.js"></script>
+        <script src="<?= $baseUrl ?>/js/codeschnipsel.js"></script>
 
         <?= $scripts ?>
     

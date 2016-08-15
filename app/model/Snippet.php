@@ -57,8 +57,8 @@ SQL;
 		parent::__construct($id);
 
         $this->setTableName('snippets');
-        $this->setDbAlias('authorId', 'author_id');
-        $this->setDbAlias('languageId', 'language_id');
+        $this->setDbField('authorId', 'author_id');
+        $this->setDbField('languageId', 'language_id');
 	}
 
 	public function getLanguage(\PDO $dbConn)

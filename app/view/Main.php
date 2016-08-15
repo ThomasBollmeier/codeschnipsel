@@ -18,6 +18,7 @@
 namespace tbollmeier\codeschnipsel\view;
 
 use tbollmeier\codeschnipsel\core;
+use tbollmeier\codeschnipsel\config\Configuration;
 
 
 class Main
@@ -57,7 +58,8 @@ class Main
         echo $this->template->getHtml([
             'currentUser' => $this->user,
             'mainContent' => $this->content,
-            'scripts' => $this->scriptCode
+            'scripts' => $this->scriptCode,
+            'baseUrl' => Configuration::getInstance()->getBaseUrl()
         ]);
 
     }

@@ -81,12 +81,13 @@ class Snippet
     private function getSnippetDetailHtml($dbConn, $id)
     {
         $snippet = new SnippetModel($id);
+        $baseUrl = Configuration::getInstance()->getBaseUrl();
 
         if ($id != core\Model::INDEX_NOT_IN_DB) {
-            $action = "/codeschnipsel/snippets/". $id;
+            $action = $baseUrl . "/snippets/". $id;
             $snippet->load($dbConn);
         } else {
-            $action = "/codeschnipsel/snippets";
+            $action = $baseUrl . "/snippets";
             $snippet->title = "";
             $snippet->code = "";
         }
