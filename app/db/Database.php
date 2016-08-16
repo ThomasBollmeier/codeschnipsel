@@ -62,21 +62,30 @@ SQL;
 
     private static function setLanguages(\PDO $dbConn)
     {
+        $names = [
+            'C/C++' => true,
+            'Clojure' => true,
+            'Haskell' => true,
+            'JavaScript' => true,
+            'PHP' => true,
+            'Python' => true,
+            'Ruby' => true
+        ];
 
-        $lang = new Language('C/C++');
-        $lang->save($dbConn);
-        $lang = new Language('Clojure');
-        $lang->save($dbConn);
-        $lang = new Language('JavaScript');
-        $lang->save($dbConn);
-        $lang = new Language('PHP');
-        $lang->save($dbConn);
-        $lang = new Language('Python');
-        $lang->save($dbConn);
-        $lang = new Language('Ruby');
-        $lang->save($dbConn);
-        $lang = new Language('Haskell');
-        $lang->save($dbConn);
+        $existingLanguages = Language::getAll($dbConn);
+
+        // From the insert list remove the languages that already exist
+        foreach ($existingLanguages as $lang) {
+            if (isset($names[$lang->name])) {
+                unset($names[$lang->name]);
+            }
+        }
+
+        // Insert the new ones:
+        foreach (array_keys($names) as $name) {
+            $lang = new Language($name);
+            $lang->save($dbConn);
+        }
 
     }
 

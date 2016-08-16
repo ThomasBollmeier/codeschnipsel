@@ -49,6 +49,7 @@ class Snippet
 
     public function create($data)
     {
+
         $session = core\Session::getInstance();
         $dbConn = Configuration::getInstance()->getDbConnection();
 
@@ -102,7 +103,8 @@ class Snippet
             'code' => $snippet->code,
             'action' => $action,
             'languages' => $languages,
-            'snippetLang' => $snippetLang
+            'snippetLang' => $snippetLang,
+            'baseUrl' => $baseUrl
         ]);
     }
 

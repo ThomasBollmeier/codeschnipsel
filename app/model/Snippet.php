@@ -83,7 +83,7 @@ SQL;
             }
         }
         // Unknown language
-        $this->languageId = Model::INDEX_NOT_IN_DB;
+        $this->languageId = null;
 
     }
 
@@ -91,22 +91,38 @@ SQL;
     {
         if ($this->id == Model::INDEX_NOT_IN_DB) {
 
-            $sql = <<<SQL
+            if ($this->languageId !== null) {
+
+                $sql = <<<SQL
 INSERT INTO snippets 
   (title, author_id, code, language_id)
 VALUES
   (:title, :author_id, :code, :language_id)
 SQL;
+            } else {
+
+                $sql = <<<SQL
+INSERT INTO snippets 
+  (title, author_id, code)
+VALUES
+  (:title, :author_id, :code)
+SQL;
+
+            }
 
             $stmnt = $dbConn->prepare($sql);
             $stmnt->bindParam(':title', $this->title);
             $stmnt->bindParam(':author_id', $this->authorId, \PDO::PARAM_INT);
             $stmnt->bindParam(':code', $this->code);
-            $stmnt->bindParam(':language_id', $this->languageId, \PDO::PARAM_INT);
+            if ($this->languageId !== null) {
+                $stmnt->bindParam(':language_id', $this->languageId, \PDO::PARAM_INT);
+            }
 
         } else {
 
-            $sql = <<<SQL
+            if ($this->languageId !== null) {
+
+                $sql = <<<SQL
 UPDATE snippets SET
   title = :title,
   code = :code,
@@ -114,10 +130,24 @@ UPDATE snippets SET
 WHERE
   id = :id
 SQL;
+            } else {
+
+                $sql = <<<SQL
+UPDATE snippets SET
+  title = :title,
+  code = :code,
+WHERE
+  id = :id
+SQL;
+
+            }
+
             $stmnt = $dbConn->prepare($sql);
             $stmnt->bindParam(':title', $this->title);
             $stmnt->bindParam(':code', $this->code);
-            $stmnt->bindParam(':language_id', $this->languageId, \PDO::PARAM_INT);
+            if ($this->languageId !== null) {
+                $stmnt->bindParam(':language_id', $this->languageId, \PDO::PARAM_INT);
+            }
             $stmnt->bindParam(':id', $this->id, \PDO::PARAM_INT);
 
         }
