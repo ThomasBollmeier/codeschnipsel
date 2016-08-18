@@ -22,16 +22,16 @@ abstract class Model
     const INDEX_NOT_IN_DB = -1;
 
     protected $tableName;
+    protected $fields;
     protected $id;
     protected $row;
-    protected $dbNames;
 
     public function __construct(int $id=-1)
     {
         $this->id = intval($id);
         $this->tableName = '';
         $this->row = [];
-        $this->dbNames = [];
+        $this->fields = [];
     }
 
     public function getId()
@@ -44,9 +44,11 @@ abstract class Model
         $this->tableName = $tableName;
     }
 
-    protected function setDbField($name, $dbName='')
+    protected function setDbField($name, $options=[])
     {
-        $this->dbNames[$name] = empty($dbName) ? $name : $dbName;
+        $dbName = isset($options['dbAlias']) ? $options['dbAlias'] : $name;
+        $pdoType = isset($options['pdoType']) ? $options['pdoType'] : \PDO::PARAM_STR;
+        $this->fields[$name] = [$dbName, $pdoType];
     }
 
     protected function setRowData($row)
@@ -56,8 +58,9 @@ abstract class Model
 
     public function __get($name)
     {
-        $dbName = isset($this->dbNames[$name]) ?
-            $this->dbNames[$name] : $name;
+        $field = isset($this->fields[$name]) ?
+            $this->fields[$name] : [$name, \PDO::PARAM_STR];
+        $dbName = $field[0];
 
         if (isset($this->row[$dbName])) {
             return $this->row[$dbName];
@@ -68,13 +71,13 @@ abstract class Model
 
     public function __set($name, $value)
     {
-        $dbName = isset($this->dbNames[$name]) ?
-            $this->dbNames[$name] : $name;
-
+        $field = isset($this->fields[$name]) ?
+            $this->fields[$name] : [$name, \PDO::PARAM_STR];
+        $dbName = $field[0];
         $this->row[$dbName] = $value;
     }
 
-    function load(\PDO $dbConn)
+    public function load(\PDO $dbConn)
     {
         if ($this->id == self::INDEX_NOT_IN_DB) {
             return;
@@ -91,7 +94,37 @@ abstract class Model
         $stmt->closeCursor();
     }
 
-    function delete(\PDO $dbConn)
+    public function save(\PDO $dbConn)
+    {
+        $sql = $this->id == self::INDEX_NOT_IN_DB ?
+            $this->createPreparedInsert() :
+            $this->createPreparedUpdate();
+
+        $stmt = $dbConn->prepare($sql);
+
+        $names = $this->getColumnInfo(self::COLUMN_INFO_NAME);
+        $types = $this->getColumnInfo(self::COLUMN_INFO_TYPE);
+        $numCols = count($names);
+        for ($col=0; $col<$numCols; $col++) {
+            $name = $names[$col];
+            $stmt->bindParam(
+                ':'.$name,
+                $this->row[$name],
+                $types[$col]);
+        }
+        if ($this->id != self::INDEX_NOT_IN_DB) {
+            $stmt->bindParam(':id', $this->id, \PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+
+        if ($this->id == self::INDEX_NOT_IN_DB) {
+            $this->id = $dbConn->lastInsertId();
+        }
+
+    }
+
+    public function delete(\PDO $dbConn)
     {
         if ($this->id == self::INDEX_NOT_IN_DB) {
             return;
@@ -107,6 +140,70 @@ abstract class Model
 
     }
 
-    abstract function save(\PDO $dbConn);
+    private function createPreparedInsert()
+    {
+        $names = $this->getColumnInfo(self::COLUMN_INFO_NAME);
+        $namesStr = implode(', ', $names);
+
+        $params = array_map(function($name) {
+            return ':'.$name;
+        }, $names);
+        $paramsStr = implode(', ', $params);
+
+        $sql = 'INSERT INTO ' . $this->tableName . ' (';
+        $sql .= $namesStr . ') VALUES (' . $paramsStr . ')';
+
+        return $sql;
+    }
+
+    private function createPreparedUpdate()
+    {
+        $names = $this->getColumnInfo(self::COLUMN_INFO_NAME);
+
+        $sql = 'UPDATE ' . $this->tableName . ' SET ';
+
+        $numCols = count($names);
+        for ($col = 0; $col<$numCols; $col++) {
+            if ($col > 0) {
+                $sql .= ', ';
+            }
+            $sql .= $names[$col] . ' = :' . $names[$col];
+        }
+
+        $sql .= ' WHERE id = :id';
+
+        return $sql;
+
+    }
+
+    const COLUMN_INFO_NAME = 1;
+    const COLUMN_INFO_VALUE = 2;
+    const COLUMN_INFO_TYPE = 3;
+
+    private function getColumnInfo($infoType) {
+
+        $info = [];
+
+        foreach ($this->fields as $name => $data) {
+            $colName = $data[0];
+            if ($this->$name === null) {
+                continue;
+            }
+            switch ($infoType) {
+                case self::COLUMN_INFO_NAME:
+                    $info[] = $colName;
+                    break;
+                case self::COLUMN_INFO_VALUE:
+                    $info[] = $this->$colName;
+                    break;
+                case self::COLUMN_INFO_TYPE:
+                    $info[] = $data[1];
+                    break;
+            }
+        }
+
+        return $info;
+
+    }
 
 }

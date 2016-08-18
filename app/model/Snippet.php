@@ -57,8 +57,25 @@ SQL;
 		parent::__construct($id);
 
         $this->setTableName('snippets');
-        $this->setDbField('authorId', 'author_id');
-        $this->setDbField('languageId', 'language_id');
+        $this->setDbField('title');
+        $this->setDbField(
+            'authorId',
+            [
+                'dbAlias' => 'author_id',
+                'pdoType' => \PDO::PARAM_INT
+            ]);
+        $this->setDbField('code');
+        $this->setDbField(
+            'languageId',
+            [
+                'dbAlias' => 'language_id',
+                'pdoType' => \PDO::PARAM_INT
+            ]);
+        $this->setDbField(
+            'lastChangedAt',
+            [
+                'dbAlias' => 'last_changed_at'
+            ]);
 	}
 
 	public function getLanguage(\PDO $dbConn)
@@ -84,79 +101,6 @@ SQL;
         }
         // Unknown language
         $this->languageId = null;
-
-    }
-
-    public function save(\PDO $dbConn)
-    {
-        if ($this->id == Model::INDEX_NOT_IN_DB) {
-
-            if ($this->languageId !== null) {
-
-                $sql = <<<SQL
-INSERT INTO snippets 
-  (title, author_id, code, language_id)
-VALUES
-  (:title, :author_id, :code, :language_id)
-SQL;
-            } else {
-
-                $sql = <<<SQL
-INSERT INTO snippets 
-  (title, author_id, code)
-VALUES
-  (:title, :author_id, :code)
-SQL;
-
-            }
-
-            $stmnt = $dbConn->prepare($sql);
-            $stmnt->bindParam(':title', $this->title);
-            $stmnt->bindParam(':author_id', $this->authorId, \PDO::PARAM_INT);
-            $stmnt->bindParam(':code', $this->code);
-            if ($this->languageId !== null) {
-                $stmnt->bindParam(':language_id', $this->languageId, \PDO::PARAM_INT);
-            }
-
-        } else {
-
-            if ($this->languageId !== null) {
-
-                $sql = <<<SQL
-UPDATE snippets SET
-  title = :title,
-  code = :code,
-  language_id = :language_id
-WHERE
-  id = :id
-SQL;
-            } else {
-
-                $sql = <<<SQL
-UPDATE snippets SET
-  title = :title,
-  code = :code,
-WHERE
-  id = :id
-SQL;
-
-            }
-
-            $stmnt = $dbConn->prepare($sql);
-            $stmnt->bindParam(':title', $this->title);
-            $stmnt->bindParam(':code', $this->code);
-            if ($this->languageId !== null) {
-                $stmnt->bindParam(':language_id', $this->languageId, \PDO::PARAM_INT);
-            }
-            $stmnt->bindParam(':id', $this->id, \PDO::PARAM_INT);
-
-        }
-
-        $stmnt->execute();
-
-        if ($this->id == Model::INDEX_NOT_IN_DB) {
-            $this->id = $dbConn->lastInsertId();
-        }
 
     }
 
