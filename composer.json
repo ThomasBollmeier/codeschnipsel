@@ -5,9 +5,23 @@
 	"description": "An application to manage code snippets",
 
 	"autoload": {
-        	"psr-4": {
-            		"tbollmeier\\codeschnipsel\\": "app/"
-        	}
-    	}	
+        "psr-4": {
+            	"tbollmeier\\codeschnipsel\\": "app/"
+        }
+    },
+
+    "repositories": [
+    	
+    	{
+        	"type": "vcs",
+        	"url": "/Users/bolle/git/tbollmeier/webappfound"
+    	}
+
+	],
+
+	"require": {
+		"php": "^7.0",
+		"tbollmeier/webappfound": "dev-master"
+	}	
 	
 }

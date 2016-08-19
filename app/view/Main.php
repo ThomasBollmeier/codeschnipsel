@@ -17,7 +17,7 @@
 
 namespace tbollmeier\codeschnipsel\view;
 
-use tbollmeier\codeschnipsel\core;
+use tbollmeier\webappfound\Template;
 use tbollmeier\codeschnipsel\config\Configuration;
 
 
@@ -30,12 +30,12 @@ class Main
 
     public function __construct($user)
     {
-        $this->template = new core\Template('index.html.php');
+        $this->template = new Template('index.html.php');
         $this->user = $user;
         if ($this->user) {
             $this->content = '';
         } else {
-            $template = new core\Template('welcome.html.php');
+            $template = new Template('welcome.html.php');
             $this->content = $template->getHtml();
         }
         $this->scriptCode = '';

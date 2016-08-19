@@ -17,7 +17,7 @@
 
 namespace tbollmeier\codeschnipsel\controller;
 
-use tbollmeier\codeschnipsel\core as core;
+use tbollmeier\webappfound as waf;
 use tbollmeier\codeschnipsel\config\Configuration;
 use tbollmeier\codeschnipsel\model\Snippet as SnippetModel;
 use tbollmeier\codeschnipsel\model\Language;
@@ -29,9 +29,9 @@ class Snippet
 
     public function index($data)
     {
-        $id = isset($data['snippet_id']) ? $data['snippet_id'] : core\Model::INDEX_NOT_IN_DB;
+        $id = $data['snippet_id'] ?? waf\Model::INDEX_NOT_IN_DB;
 
-        $user = core\Session::getInstance()->currentUser;
+        $user = waf\Session::getInstance()->currentUser;
         $dbConn = Configuration::getInstance()->getDbConnection();
 
         $view = new Main($user);
@@ -50,7 +50,7 @@ class Snippet
     public function create($data)
     {
 
-        $session = core\Session::getInstance();
+        $session = waf\Session::getInstance();
         $dbConn = Configuration::getInstance()->getDbConnection();
 
         $snippet = new SnippetModel();
@@ -84,7 +84,7 @@ class Snippet
         $snippet = new SnippetModel($id);
         $baseUrl = Configuration::getInstance()->getBaseUrl();
 
-        if ($id != core\Model::INDEX_NOT_IN_DB) {
+        if ($id != waf\Model::INDEX_NOT_IN_DB) {
             $action = $baseUrl . "/snippets/". $id;
             $snippet->load($dbConn);
         } else {
@@ -96,7 +96,7 @@ class Snippet
         $languages = Language::getAll($dbConn);
         $snippetLang = $snippet->getLanguage($dbConn);
 
-        $template = new core\Template('snippet_detail.html.php');
+        $template = new waf\Template('snippet_detail.html.php');
 
         return $template->getHtml([
             'title' => $snippet->title,
@@ -110,7 +110,7 @@ class Snippet
 
     private function getSnippetDetailScript()
     {
-        $template = new core\Template('snippet_detail_js.html.php');
+        $template = new waf\Template('snippet_detail_js.html.php');
 
         return $template->getHtml();
     }

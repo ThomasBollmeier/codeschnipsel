@@ -17,49 +17,40 @@
 
 namespace tbollmeier\codeschnipsel\model;
 
-use tbollmeier\codeschnipsel\core\Session;
-use tbollmeier\codeschnipsel\core\Model;
+use tbollmeier\webappfound\Session;
+use tbollmeier\webappfound\Model;
 
 
 class User extends Model
 {
-
-    private $email;
-    private $passwordHash;
-    private $name;
 	
 	public static function findByEmail(\PDO $dbConn, $email)
 	{
-	    $res = null;
+	    $users = User::query($dbConn, [
+                'filter' => 'email = :email',
+                'params' => [':email' => $email]
+            ]);
 
-	    $sql = 'SELECT * FROM users WHERE email = :email';
-        $stmt = $dbConn->prepare($sql);
-
-        $stmt->execute([':email' => $email]);
-        $row = $stmt->fetch();
-
-        if ($row) {
-            $user = new User();
-            $user->id = $row['id'];
-            $user->setEmail($row['email']);
-            $user->setPasswordHash($row['password_hash']);
-            $user->setName($row['nickname']);
-            $res = $user;
-        }
-
-        $stmt->closeCursor();
-
-        return $res;
-
+        return count($users) == 1 ? $users[0] : null;
 	}
+
+    public function __construct($id = Model::INDEX_NOT_IN_DB)
+    {
+        parent::__construct($id);
+
+        $this->setTableName('users');
+        $this->setDbField('email');
+        $this->setDbField('passwordHash', ['dbAlias' => 'password_hash']);
+        $this->setDbField('name', ['dbAlias' => 'nickname']);
+    }
 
 	public static function create($email, $password, $name='')
     {
         $user = new User();
 
-        $user->setEmail($email);
+        $user->email = $email;
         $user->setPassword($password);
-        $user->setName(!empty($name) ? $name : $email);
+        $user->name = !empty($name) ? $name : $email;
 
         return $user;
     }
@@ -87,78 +78,9 @@ class User extends Model
 		return $this === $currentUser;
 	}
 
-    public function save(\PDO $dbConn)
-    {
-        if ($this->id == -1) {
-            $sql = 'INSERT INTO users (email, password_hash, nickname) ';
-            $sql .= 'VALUES (:email, :password_hash, :nickname)';
-            $params = [
-                ':email' => $this->email,
-                ':password_hash' => $this->passwordHash,
-                ':nickname' => $this->name
-            ];
-        } else {
-            $sql = '';
-            $params = [];
-        }
-
-        $stmt = $dbConn->prepare($sql);
-        $stmt->execute($params);
-
-        if ($this->id == -1) {
-            $this->id = intval($dbConn->lastInsertId());
-        }
-
-    }
-
-    /**
-     * @param mixed $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return bool|string
-     */
-    public function getPasswordHash()
-    {
-        return $this->passwordHash;
-    }
-
-    /**
-     * @param bool|string $passwordHash
-     */
-    public function setPasswordHash($passwordHash)
-    {
-        $this->passwordHash = $passwordHash;
-    }
-
     public function setPassword($password)
     {
         $this->passwordHash = password_hash($password, \PASSWORD_DEFAULT);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param mixed $email
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
     }
 
 }

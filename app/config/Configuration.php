@@ -17,7 +17,7 @@
 
 namespace tbollmeier\codeschnipsel\config;
 
-use tbollmeier\codeschnipsel\core\db\Connector;
+use tbollmeier\webappfound\db\Connector;
 
 
 class Configuration

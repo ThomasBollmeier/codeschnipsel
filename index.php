@@ -16,13 +16,12 @@
 */
 require_once 'vendor/autoload.php';
 
-use tbollmeier\codeschnipsel\core\Session;
+use tbollmeier\webappfound as waf;
 use tbollmeier\codeschnipsel\db as db;
-use tbollmeier\codeschnipsel\core as core;
 use tbollmeier\codeschnipsel\config\Configuration;
 
 
-function initDb(Configuration $config, Session $session)
+function setupDatabase(Configuration $config, waf\Session $session)
 {
     $initialized = $session->get('initialized', false);
 
@@ -34,50 +33,32 @@ function initDb(Configuration $config, Session $session)
 
 $config = Configuration::getInstance();
 
-initDb($config, Session::getInstance());
+setupDatabase($config, waf\Session::getInstance());
 
-$router = new core\Router([
+// Setup template handling
+waf\Template::setTemplateDir(__DIR__.'/app/template');
+
+// Setup routing
+$router = new waf\Router([
     'controllerNS' => 'tbollmeier\\codeschnipsel\\controller',
     'defaultCtrlAction' => 'Home.index',
     'baseUrl' => $config->getBaseUrl()
 ]);
 
-$router->registerAction(
-    'GET',
-    'snippets/:snippet_id',
-    'Snippet.index'
-);
-$router->registerAction(
-    'GET',
-    'new-snippet',
-    'Snippet.index'
-);
-$router->registerAction(
-    'GET',
-    'snippets/delete/:snippet_id',
-    'Home.delete'
-);
+$routesData = <<<DATA
 
-$router->registerAction(
-    'POST',
-    'signin',
-    'Home.signin'
-);
-$router->registerAction(
-    'POST',
-    'signout',
-    'Home.signout'
-);
-$router->registerAction(
-    'POST',
-    'snippets',
-    'Snippet.create'
-);
-$router->registerAction(
-    'POST',
-    'snippets/:snippet_id',
-    'Snippet.update'
-);
+GET snippets/:snippet_id Snippet.index,
+GET new-snippet Snippet.index,
+GET snippets/delete/:snippet_id Home.delete,
+
+POST snippets Snippet.create,
+POST snippets/:snippet_id Snippet.update,
+
+POST signin Home.signin,
+POST signout Home.signout,
+
+DATA;
+
+$router->registerActions($routesData);
 
 $router->route($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
-

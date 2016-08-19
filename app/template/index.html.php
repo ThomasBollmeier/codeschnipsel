@@ -86,7 +86,7 @@ $scripts
                     </form>
                     <?php if ($currentUser): ?>
                     
-                    <p class="cs-username navbar-text navbar-right"><?= $currentUser->getName() ?></p>
+                    <p class="cs-username navbar-text navbar-right"><?= $currentUser->name ?></p>
                 
                     <?php endif ?>
                 </div><!--/.navbar-collapse -->

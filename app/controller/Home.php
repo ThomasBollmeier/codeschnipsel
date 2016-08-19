@@ -17,7 +17,7 @@
 
 namespace tbollmeier\codeschnipsel\controller;
 
-use tbollmeier\codeschnipsel\core as core;
+use tbollmeier\webappfound as waf;
 use tbollmeier\codeschnipsel\model\User;
 use tbollmeier\codeschnipsel\model\Snippet;
 use tbollmeier\codeschnipsel\view\Main;
@@ -29,7 +29,7 @@ class Home
 
     public function index($data=[])
     {
-        $user = core\Session::getInstance()->currentUser;
+        $user = waf\Session::getInstance()->currentUser;
         $dbConn = Configuration::getInstance()->getDbConnection();
 
         $view = new Main($user);
@@ -54,6 +54,7 @@ class Home
 
     public function signin($data)
     {
+        
         while (true) {
 
             if (!isset($_POST['email'])) {
@@ -81,7 +82,7 @@ class Home
 
     public function signout($data)
     {
-        core\Session::deleteInstance();
+        waf\Session::deleteInstance();
 
         $this->index();
     }
@@ -90,18 +91,17 @@ class Home
     {
         $snippets = Snippet::getAllOf($dbConn, $author);
 
-        $template = new core\Template('snippets_overview.html.php');
+        $template = new waf\Template('snippets_overview.html.php');
 
         return $template->getHtml([
             'baseUrl' => Configuration::getInstance()->getBaseUrl(),
             'snippets' => $snippets
         ]);
-
     }
 
     public function getScripts()
     {
-        $template = new core\Template('snippets_overview_js.html.php');
+        $template = new waf\Template('snippets_overview_js.html.php');
 
         return $template->getHtml();
     }

@@ -17,39 +17,21 @@
 
 namespace tbollmeier\codeschnipsel\model;
 
-use tbollmeier\codeschnipsel\core\Model;
+use tbollmeier\webappfound\Model;
 
 
 class Snippet extends Model
 {
 
-	public static function getAllOf(\PDO $dbConn, User $author, $publicOnly=true)
+	public static function getAllOf(\PDO $dbConn, User $author)
 	{
-	    $snippets = [];
+        $snippets = Snippet::query($dbConn, [
+            'filter' => 'author_id = :author_id',
+            'orderBy'=> 'last_changed_at DESC',
+            'params' => [':author_id' => $author->getId()]
+            ]);
 
-	    $sql = <<<SQL
-SELECT * 
-FROM 
-  snippets
-WHERE
-  author_id = :author_id
-ORDER BY
-  last_changed_at DESC 
-SQL;
-        $stmt = $dbConn->prepare($sql);
-        $stmt->execute([':author_id' => $author->getId()]);
-
-        $row = $stmt->fetch();
-        while ($row) {
-            $snippet = new Snippet($row['id']);
-            $snippet->setRowData($row);
-            $snippets[] = $snippet;
-            $row = $stmt->fetch();
-        }
-
-        $stmt->closeCursor();
-
-		return $snippets;
+        return $snippets;
 	}
 	
 	public function __construct($id=-1)
