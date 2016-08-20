@@ -30,12 +30,10 @@ class Home
     public function index($data=[])
     {
         $user = waf\Session::getInstance()->currentUser;
-        $dbConn = Configuration::getInstance()->getDbConnection();
-
         $view = new Main($user);
 
         if ($user) {
-            $view->setContent($this->getSnippetOverviewHtml($dbConn, $user));
+            $view->setContent($this->getSnippetOverviewHtml($user));
             $view->setScripts($this->getScripts());
         }
 
@@ -45,8 +43,7 @@ class Home
     public function delete($data)
     {
         $snippet = new Snippet($data['snippet_id']);
-        $dbConn = Configuration::getInstance()->getDbConnection();
-        $snippet->delete($dbConn);
+        $snippet->delete();
 
         $this->index();
 
@@ -66,9 +63,7 @@ class Home
                 break;
             }
 
-            $dbConn = Configuration::getInstance()->getDbConnection();
-
-            $user = User::findByEmail($dbConn, $email);
+            $user = User::findByEmail($email);
 
             if ($user) {
                 $user->signIn($_POST['password']);
@@ -87,9 +82,9 @@ class Home
         $this->index();
     }
 
-    private function getSnippetOverviewHtml($dbConn, $author)
+    private function getSnippetOverviewHtml($author)
     {
-        $snippets = Snippet::getAllOf($dbConn, $author);
+        $snippets = Snippet::getAllOf($author);
 
         $template = new waf\Template('snippets_overview.html.php');
 

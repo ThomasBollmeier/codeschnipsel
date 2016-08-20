@@ -1,10 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: drbolle
- * Date: 16.05.16
- * Time: 12:44
- */
+/*
+   Copyright 2016 Thomas Bollmeier <entwickler@tbollmeier.de>
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 
 namespace tbollmeier\codeschnipsel\db;
 
@@ -56,11 +65,11 @@ CREATE TABLE IF NOT EXISTS `snippets` (
 SQL;
         $conn->exec($sql);
 
-        self::setLanguages($conn);
+        self::setLanguages();
 
     }
 
-    private static function setLanguages(\PDO $dbConn)
+    private static function setLanguages()
     {
         $names = [
             'C/C++' => true,
@@ -72,7 +81,7 @@ SQL;
             'Ruby' => true
         ];
 
-        $existingLanguages = Language::getAll($dbConn);
+        $existingLanguages = Language::query();
 
         // From the insert list remove the languages that already exist
         foreach ($existingLanguages as $lang) {
@@ -83,8 +92,9 @@ SQL;
 
         // Insert the new ones:
         foreach (array_keys($names) as $name) {
-            $lang = new Language($name);
-            $lang->save($dbConn);
+            $lang = new Language();
+            $lang->name = $name;
+            $lang->save();
         }
 
     }

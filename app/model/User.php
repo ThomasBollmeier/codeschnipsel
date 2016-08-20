@@ -18,23 +18,23 @@
 namespace tbollmeier\codeschnipsel\model;
 
 use tbollmeier\webappfound\Session;
-use tbollmeier\webappfound\Model;
+use tbollmeier\webappfound\db\ActiveRecord;
 
 
-class User extends Model
+class User extends ActiveRecord
 {
 	
-	public static function findByEmail(\PDO $dbConn, $email)
+	public static function findByEmail($email)
 	{
-	    $users = User::query($dbConn, [
-                'filter' => 'email = :email',
-                'params' => [':email' => $email]
-            ]);
+	    $users = User::query([
+	        'filter' => 'email = :email',
+            'params' => [':email' => $email]
+        ]);
 
         return count($users) == 1 ? $users[0] : null;
 	}
 
-    public function __construct($id = Model::INDEX_NOT_IN_DB)
+    public function __construct($id = ActiveRecord::INDEX_NOT_IN_DB)
     {
         parent::__construct($id);
 

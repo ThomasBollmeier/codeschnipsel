@@ -33,6 +33,9 @@ function setupDatabase(Configuration $config, waf\Session $session)
 
 $config = Configuration::getInstance();
 
+// configure active reccord management (must be done before DB setup!):
+waf\db\ActiveRecord::setDbConnection($config->getDbConnection());
+
 setupDatabase($config, waf\Session::getInstance());
 
 // Setup template handling
@@ -55,7 +58,7 @@ POST snippets Snippet.create,
 POST snippets/:snippet_id Snippet.update,
 
 POST signin Home.signin,
-POST signout Home.signout,
+POST signout Home.signout
 
 DATA;
 

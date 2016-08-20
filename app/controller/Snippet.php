@@ -29,15 +29,14 @@ class Snippet
 
     public function index($data)
     {
-        $id = $data['snippet_id'] ?? waf\Model::INDEX_NOT_IN_DB;
+        $id = $data['snippet_id'] ?? waf\db\ActiveRecord::INDEX_NOT_IN_DB;
 
         $user = waf\Session::getInstance()->currentUser;
-        $dbConn = Configuration::getInstance()->getDbConnection();
 
         $view = new Main($user);
 
         if ($user) {
-            $html = $this->getSnippetDetailHtml($dbConn, $id);
+            $html = $this->getSnippetDetailHtml($id);
             $view->setContent($html);
             $html = $this->getSnippetDetailScript();
             $view->setScripts($html);
@@ -51,15 +50,14 @@ class Snippet
     {
 
         $session = waf\Session::getInstance();
-        $dbConn = Configuration::getInstance()->getDbConnection();
 
         $snippet = new SnippetModel();
         $snippet->title = $_POST['title'];
         $snippet->authorId = $session->currentUser->getId();
         $snippet->code = $_POST['code'];
-        $snippet->setLanguage($dbConn, $_POST['language']);
+        $snippet->setLanguage($_POST['language']);
 
-        $snippet->save($dbConn);
+        $snippet->save();
 
         $this->index(['snippet_id' => $snippet->getId()]);
     }
@@ -67,34 +65,33 @@ class Snippet
     public function update($data)
     {
         $snippet = new SnippetModel($data['snippet_id']);
-        $dbConn = Configuration::getInstance()->getDbConnection();
 
         $snippet->title = $_POST['title'];
         $snippet->code = $_POST['code'];
-        $snippet->setLanguage($dbConn, $_POST['language']);
+        $snippet->setLanguage($_POST['language']);
 
-        $snippet->save($dbConn);
+        $snippet->save();
 
         $this->index(['snippet_id' => $snippet->getId()]);
 
     }
 
-    private function getSnippetDetailHtml($dbConn, $id)
+    private function getSnippetDetailHtml($id)
     {
         $snippet = new SnippetModel($id);
         $baseUrl = Configuration::getInstance()->getBaseUrl();
 
-        if ($id != waf\Model::INDEX_NOT_IN_DB) {
+        if ($id != waf\db\ActiveRecord::INDEX_NOT_IN_DB) {
             $action = $baseUrl . "/snippets/". $id;
-            $snippet->load($dbConn);
+            $snippet->load();
         } else {
             $action = $baseUrl . "/snippets";
             $snippet->title = "";
             $snippet->code = "";
         }
 
-        $languages = Language::getAll($dbConn);
-        $snippetLang = $snippet->getLanguage($dbConn);
+        $languages = Language::query();
+        $snippetLang = $snippet->getLanguage();
 
         $template = new waf\Template('snippet_detail.html.php');
 

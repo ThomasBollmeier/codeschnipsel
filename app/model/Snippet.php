@@ -17,15 +17,15 @@
 
 namespace tbollmeier\codeschnipsel\model;
 
-use tbollmeier\webappfound\Model;
+use tbollmeier\webappfound\db\ActiveRecord;
 
 
-class Snippet extends Model
+class Snippet extends ActiveRecord
 {
 
-	public static function getAllOf(\PDO $dbConn, User $author)
+	public static function getAllOf(User $author)
 	{
-        $snippets = Snippet::query($dbConn, [
+        $snippets = Snippet::query([
             'filter' => 'author_id = :author_id',
             'orderBy'=> 'last_changed_at DESC',
             'params' => [':author_id' => $author->getId()]
@@ -34,7 +34,7 @@ class Snippet extends Model
         return $snippets;
 	}
 	
-	public function __construct($id=-1)
+	public function __construct($id=ActiveRecord::INDEX_NOT_IN_DB)
 	{
 		parent::__construct($id);
 
@@ -60,21 +60,21 @@ class Snippet extends Model
             ]);
 	}
 
-	public function getLanguage(\PDO $dbConn)
+	public function getLanguage()
     {
         $langId = intval($this->languageId);
-        if (!empty($langId) && $langId != Model::INDEX_NOT_IN_DB) {
-            $lang = new Language('', $langId);
-            $lang->load($dbConn);
+        if (!empty($langId) && $langId != ActiveRecord::INDEX_NOT_IN_DB) {
+            $lang = new Language($langId);
+            $lang->load();
             return $lang->name;
         } else {
             return "";
         }
     }
 
-    public function setLanguage(\PDO $dbConn, $languageName)
+    public function setLanguage($languageName)
     {
-        $languages = Language::getAll($dbConn);
+        $languages = Language::query();
         foreach ($languages as $language) {
             if ($language->name == $languageName) {
                 $this->languageId = $language->getId();

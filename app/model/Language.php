@@ -17,17 +17,13 @@
 
 namespace tbollmeier\codeschnipsel\model;
 
-use tbollmeier\webappfound\Model;
+use tbollmeier\webappfound\db\ActiveRecord;
 
 
-class Language extends Model
+class Language extends ActiveRecord
 {
-    public static function getAll(\PDO $dbConn)
-    {
-        return Language::query($dbConn);
-    }
 
-    public function __construct($name='', $id=-1)
+    public function __construct($id=ActiveRecord::INDEX_NOT_IN_DB, $name='')
     {
         parent::__construct($id);
 
