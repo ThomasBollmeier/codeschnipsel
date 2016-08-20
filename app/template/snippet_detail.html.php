@@ -5,9 +5,11 @@
             action="<?= $action ?>">
             <div class="form-group">
                 <input type="text"
+                       id="title"
                        name="title"
                        class="cs-title-input"
                        value="<?= $title ?>"
+                       size="80"
                        placeholder="Dein Titel">
             </div>
             <div class="form-group">
@@ -27,11 +29,17 @@
             <div class="form-group">
                 <textarea id="editor"
                           name="code"
-                          rows="20"
+                          rows="30"
                           cols="80"><?= $code ?></textarea>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-success">Sichern</button>
+                <button type="submit"
+                        class="btn btn-success"><span class="glyphicon glyphicon-save"></span> Sichern</button>
+                <label class="btn btn-success btn-file">
+                    <span class="glyphicon glyphicon-open-file"></span> Hochladen
+                    <input id="btn-file-upload"
+                           type="file">
+                </label>
             </div>
         </form>
     </div>

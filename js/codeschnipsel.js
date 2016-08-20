@@ -25,6 +25,25 @@ var cs = (function () {
 
         },
 
+        onFileUpload: function (editor) {
+
+            var files = this.files,
+                reader;
+
+            if (files) {
+                reader = new FileReader();
+                reader.onload = function() {
+                    var title = $('#title').val();
+                    if (!title) {
+                        $('#title').val(files[0].name);
+                    }
+                    editor.setValue(this.result);
+                };
+                reader.readAsText(files[0]);
+            }
+
+        },
+
         setEditorLanguage: function(editor) {
 
             var lang = $('#language').val(),
