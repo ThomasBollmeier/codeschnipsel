@@ -27,7 +27,7 @@ use tbollmeier\codeschnipsel\config\Configuration;
 class Home
 {
 
-    public function index($data=[])
+    public function index()
     {
         $user = waf\Session::getInstance()->currentUser;
         $view = new Main($user);
@@ -40,16 +40,16 @@ class Home
         $view->render();
     }
 
-    public function delete($data)
+    public function delete($urlParams)
     {
-        $snippet = new Snippet($data['snippet_id']);
+        $snippet = new Snippet($urlParams['snippet_id']);
         $snippet->delete();
 
         $this->index();
 
     }
 
-    public function signin($data)
+    public function signin()
     {
         
         while (true) {
@@ -75,7 +75,7 @@ class Home
         $this->index();
     }
 
-    public function signout($data)
+    public function signout()
     {
         waf\Session::deleteInstance();
 
@@ -86,7 +86,7 @@ class Home
     {
         $snippets = Snippet::getAllOf($author);
 
-        $template = new waf\Template('snippets_overview.html.php');
+        $template = new waf\ui\Template('snippets_overview.html.php');
 
         return $template->getHtml([
             'baseUrl' => Configuration::getInstance()->getBaseUrl(),
@@ -96,7 +96,7 @@ class Home
 
     public function getScripts()
     {
-        $template = new waf\Template('snippets_overview_js.html.php');
+        $template = new waf\ui\Template('snippets_overview_js.html.php');
 
         return $template->getHtml();
     }

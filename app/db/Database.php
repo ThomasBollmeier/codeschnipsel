@@ -65,6 +65,24 @@ CREATE TABLE IF NOT EXISTS `snippets` (
 SQL;
         $conn->exec($sql);
 
+        $sql = <<<SQL
+CREATE TABLE IF NOT EXISTS `tags` ( 
+  `id` INT NOT NULL AUTO_INCREMENT , 
+  `name` VARCHAR(80) NOT NULL , 
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB DEFAULT CHARSET=utf8
+SQL;
+        $conn->exec($sql);
+
+        $sql = <<<SQL
+CREATE TABLE IF NOT EXISTS `snippets_tags` ( 
+  `snippet_id` INT NOT NULL , 
+  `tag_id` INT NOT NULL , 
+  PRIMARY KEY (`snippet_id`, `tag_id`)
+) ENGINE = InnoDB DEFAULT CHARSET=utf8
+SQL;
+        $conn->exec($sql);
+
         self::setLanguages();
 
     }

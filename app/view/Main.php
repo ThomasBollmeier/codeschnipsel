@@ -17,7 +17,7 @@
 
 namespace tbollmeier\codeschnipsel\view;
 
-use tbollmeier\webappfound\Template;
+use tbollmeier\webappfound\ui\Template;
 use tbollmeier\codeschnipsel\config\Configuration;
 
 

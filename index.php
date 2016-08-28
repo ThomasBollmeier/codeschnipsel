@@ -39,7 +39,7 @@ waf\db\ActiveRecord::setDbConnection($config->getDbConnection());
 setupDatabase($config, waf\Session::getInstance());
 
 // Setup template handling
-waf\Template::setTemplateDir(__DIR__.'/app/template');
+waf\ui\Template::setTemplateDir(__DIR__.'/app/template');
 
 // Setup routing
 $router = new waf\Router([

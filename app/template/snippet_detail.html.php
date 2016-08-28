@@ -4,15 +4,19 @@
             method="post"
             action="<?= $action ?>">
             <div class="form-group">
+                <label for="title"
+                       class="cs-label">Titel</label>
                 <input type="text"
                        id="title"
                        name="title"
-                       class="cs-title-input"
+                       class="cs-text-input"
                        value="<?= $title ?>"
                        size="80"
                        placeholder="Dein Titel">
             </div>
             <div class="form-group">
+                <label for="language"
+                       class="cs-label">Sprache</label>
                 <select id="language"
                         name="language"
                         class="selectpicker">
@@ -31,6 +35,16 @@
                           name="code"
                           rows="30"
                           cols="80"><?= $code ?></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tags"
+                       class="cs-label">Stichworte</label>
+                <input id="tags"
+                       name="tags"
+                       class="cs-text-input"
+                       type="text"
+                       value="<?= $tagsStr ?>"
+                       size="80">
             </div>
             <div class="form-group">
                 <button type="submit"

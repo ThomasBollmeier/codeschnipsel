@@ -38,27 +38,52 @@ class Snippet extends ActiveRecord
 	{
 		parent::__construct($id);
 
-        $this->setTableName('snippets');
-        $this->setDbField('title');
-        $this->setDbField(
+        $this->defineTable('snippets');
+        $this->defineField('title');
+        $this->defineField(
             'authorId',
             [
                 'dbAlias' => 'author_id',
                 'pdoType' => \PDO::PARAM_INT
             ]);
-        $this->setDbField('code');
-        $this->setDbField(
+        $this->defineField('code');
+        $this->defineField(
             'languageId',
             [
                 'dbAlias' => 'language_id',
                 'pdoType' => \PDO::PARAM_INT
             ]);
-        $this->setDbField(
+        $this->defineField(
             'lastChangedAt',
             [
                 'dbAlias' => 'last_changed_at'
             ]);
+
+        // Associations:
+
+        $this->defineAssoc(
+            'tags',
+            'tbollmeier\\codeschnipsel\\model\\Tag',
+            false, // <-- no composition
+            [
+                'linkTable' => 'snippets_tags',
+                'sourceIdField' => 'snippet_id',
+                'targetIdField' => 'tag_id',
+                'onDeleteCallback' => [
+                    'tbollmeier\\codeschnipsel\\model\\Snippet',
+                    'onTagRemoved']
+            ]);
+
 	}
+
+	public static function onTagRemoved($tag) {
+
+	    // Delete tag if no further snippets are assigned
+	    if (count($tag->snippets) == 0) {
+	        $tag->delete();
+        }
+
+    }
 
 	public function getLanguage()
     {
@@ -83,6 +108,33 @@ class Snippet extends ActiveRecord
         }
         // Unknown language
         $this->languageId = null;
+
+    }
+
+    public function getTags()
+    {
+        $tagNames = array_map(function($tag) {
+            return $tag->name;
+        }, $this->tags);
+
+        return implode(' ', $tagNames);
+    }
+
+    public function setTags($tagsStr)
+    {
+        $tagNames = array_map('trim', explode(' ', $tagsStr));
+
+        $tags = [];
+        foreach ($tagNames as $tagName) {
+            $tag = Tag::findByName($tagName);
+            if (!$tag) {
+                $tag = new Tag();
+                $tag->name = $tagName;
+            }
+            $tags[] = $tag;
+        }
+
+        $this->tags = $tags;
 
     }
 

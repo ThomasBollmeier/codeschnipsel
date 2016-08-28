@@ -2,7 +2,11 @@
     font-size: larger;
 }
 
-.cs-title-input {
+.cs-label {
+    margin-right: 5px;
+}
+
+.cs-text-input {
     font-family: "Courier New", Courier;
     font-size: larger;
     color: white;

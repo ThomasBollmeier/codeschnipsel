@@ -38,10 +38,10 @@ class User extends ActiveRecord
     {
         parent::__construct($id);
 
-        $this->setTableName('users');
-        $this->setDbField('email');
-        $this->setDbField('passwordHash', ['dbAlias' => 'password_hash']);
-        $this->setDbField('name', ['dbAlias' => 'nickname']);
+        $this->defineTable('users');
+        $this->defineField('email');
+        $this->defineField('passwordHash', ['dbAlias' => 'password_hash']);
+        $this->defineField('name', ['dbAlias' => 'nickname']);
     }
 
 	public static function create($email, $password, $name='')

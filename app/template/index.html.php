@@ -33,7 +33,7 @@ $scripts
         <title>Codeschnipsel</title>
         <link rel="stylesheet" href="<?= $baseUrl ?>/css/bootstrap-slate.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
-        <link rel="stylesheet" href="<?= $baseUrl ?>/css<?= $baseUrl ?>.css">
+        <link rel="stylesheet" href="<?= $baseUrl ?>/css/codeschnipsel.css">
         <link rel="stylesheet" href="<?= $baseUrl ?>/css/codemirror/codemirror.css">
         <link rel="stylesheet" href="<?= $baseUrl ?>/css/codemirror/theme/monokai.css">
     </head>

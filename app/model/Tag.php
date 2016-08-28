@@ -20,17 +20,38 @@ namespace tbollmeier\codeschnipsel\model;
 use tbollmeier\webappfound\db\ActiveRecord;
 
 
-class Language extends ActiveRecord
+class Tag extends ActiveRecord
 {
+    public static function findByName($name)
+    {
+        $tags = Tag::query([
+            'filter' => 'name = :name',
+            'params' => [':name' => $name]
+        ]);
 
-    public function __construct($id=ActiveRecord::INDEX_NOT_IN_DB, $name='')
+        return !empty($tags) ? $tags[0] : null;
+    }
+
+
+    public function __construct($id=ActiveRecord::INDEX_NOT_IN_DB)
     {
         parent::__construct($id);
 
-        $this->defineTable('languages');
+        $this->defineTable('tags');
         $this->defineField('name');
 
-        $this->name = $name;
+        // Associations:
+
+        $this->defineAssoc(
+            'snippets',
+            'tbollmeier\\codeschnipsel\\model\\Snippet',
+            false, // <-- no composition
+            [
+                'linkTable' => 'snippets_tags',
+                'sourceIdField' => 'tag_id',
+                'targetIdField' => 'snippet_id'
+            ]);
+
     }
 
 }

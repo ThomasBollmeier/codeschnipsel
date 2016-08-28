@@ -46,7 +46,7 @@ class Snippet
 
     }
 
-    public function create($data)
+    public function create()
     {
 
         $session = waf\Session::getInstance();
@@ -56,6 +56,8 @@ class Snippet
         $snippet->authorId = $session->currentUser->getId();
         $snippet->code = $_POST['code'];
         $snippet->setLanguage($_POST['language']);
+        $tagsStr = $_POST('tags');
+        $snippet->setTags($tagsStr);
 
         $snippet->save();
 
@@ -69,6 +71,8 @@ class Snippet
         $snippet->title = $_POST['title'];
         $snippet->code = $_POST['code'];
         $snippet->setLanguage($_POST['language']);
+        $tagsStr = $_POST['tags'];
+        $snippet->setTags($tagsStr);
 
         $snippet->save();
 
@@ -93,7 +97,9 @@ class Snippet
         $languages = Language::query();
         $snippetLang = $snippet->getLanguage();
 
-        $template = new waf\Template('snippet_detail.html.php');
+        $tagsStr = $snippet->getTags();
+
+        $template = new waf\ui\Template('snippet_detail.html.php');
 
         return $template->getHtml([
             'title' => $snippet->title,
@@ -101,13 +107,14 @@ class Snippet
             'action' => $action,
             'languages' => $languages,
             'snippetLang' => $snippetLang,
+            'tagsStr' => $tagsStr,
             'baseUrl' => $baseUrl
         ]);
     }
 
     private function getSnippetDetailScript()
     {
-        $template = new waf\Template('snippet_detail_js.html.php');
+        $template = new waf\ui\Template('snippet_detail_js.html.php');
 
         return $template->getHtml();
     }
