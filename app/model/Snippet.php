@@ -117,12 +117,12 @@ class Snippet extends ActiveRecord
             return $tag->name;
         }, $this->tags);
 
-        return implode(' ', $tagNames);
+        return implode(',', $tagNames);
     }
 
     public function setTags($tagsStr)
     {
-        $tagNames = array_map('trim', explode(' ', $tagsStr));
+        $tagNames = array_map('trim', explode(',', $tagsStr));
 
         $tags = [];
         foreach ($tagNames as $tagName) {

@@ -56,7 +56,7 @@ class Snippet
         $snippet->authorId = $session->currentUser->getId();
         $snippet->code = $_POST['code'];
         $snippet->setLanguage($_POST['language']);
-        $tagsStr = $_POST('tags');
+        $tagsStr = $_POST["tags"];
         $snippet->setTags($tagsStr);
 
         $snippet->save();

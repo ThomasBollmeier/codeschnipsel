@@ -44,7 +44,8 @@
                        class="cs-text-input"
                        type="text"
                        value="<?= $tagsStr ?>"
-                       size="80">
+                       size="80"
+                       data-role="tagsinput">
             </div>
             <div class="form-group">
                 <button type="submit"

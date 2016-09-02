@@ -31,8 +31,9 @@ $scripts
     <head lang="de">
         <meta charset="utf-8">
         <title>Codeschnipsel</title>
-        <link rel="stylesheet" href="<?= $baseUrl ?>/css/bootstrap-slate.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
+        <link rel="stylesheet" href="<?= $baseUrl ?>/css/bootstrap-tagsinput.css">
+        <link rel="stylesheet" href="<?= $baseUrl ?>/css/bootstrap-slate.min.css">
         <link rel="stylesheet" href="<?= $baseUrl ?>/css/codeschnipsel.css">
         <link rel="stylesheet" href="<?= $baseUrl ?>/css/codemirror/codemirror.css">
         <link rel="stylesheet" href="<?= $baseUrl ?>/css/codemirror/theme/monokai.css">
@@ -105,6 +106,8 @@ $scripts
     
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="<?= $baseUrl ?>/js/bootstrap.min.js"></script>
+        <script src="<?= $baseUrl ?>/js/bootstrap-tagsinput.min.js"></script>
+        <script src="<?= $baseUrl ?>/js/bootstrap-tagsinput.min.js.map"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
         <script src="<?= $baseUrl ?>/js/codeschnipsel.js"></script>
 
