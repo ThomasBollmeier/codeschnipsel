@@ -15,4 +15,8 @@
         cs.onFileUpload.bind($(this)[0])(editor);
     });
 
+    var tags = $('#tags').tagsinput({
+        tagClass: 'label label-success'
+    });
+
 </script>
