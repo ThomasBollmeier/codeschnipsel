@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-2">
-            <a href="<?= $baseUrl ?>/new-snippet" class="btn btn-success">
+            <a href="<?= $baseUrl ?>/snippets/new" class="btn btn-success">
                 <span class="glyphicon glyphicon-plus"></span> Neues Schnipsel</a>
         </div>
     </div>
@@ -16,6 +16,9 @@
                         <td><a href="<?= "$baseUrl/snippets/" . $snippet->getId() ?>"><?= $snippet->title ?></a>
                         </td>
                         <td class="text-right">
+                            <a href="<?= "$baseUrl/snippets/" . $snippet->getId() . "/edit" ?>"
+                                ><span class="glyphicon glyphicon-pencil"></span> 
+                            </a>
                             <a href="#"
                                class="snippet-delete btn btn-default"
                                data-snippet-id = "<?= $snippet->getId() ?>"

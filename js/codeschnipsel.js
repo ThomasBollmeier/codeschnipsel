@@ -14,8 +14,13 @@ var cs = (function () {
 
             $modal.find('#btn-snippet-deletion').click(function() {
                 $modal.modal('hide');
-                // Send a GET request for the deletion
-                location.href = '/codeschnipsel/snippets/delete/' + snippetId;
+                // Send a DELETE request to delete the snippet
+                $.ajax({
+                    url: '/codeschnipsel/snippets/' + snippetId,
+                    method: 'DELETE'
+                }).done(function() {
+                   location.href = '/codeschnipsel/snippets'; 
+                });
             });
 
             $modalTitle.text('Löschung von "' + title + '"');

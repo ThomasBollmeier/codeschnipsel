@@ -1,6 +1,9 @@
 <script>
 
     var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+        <?php if ($readOnly) {?>
+        readOnly: true,
+        <?php } ?>
         lineNumbers: true,
         theme: "monokai"
     });

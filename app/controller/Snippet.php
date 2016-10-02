@@ -29,21 +29,38 @@ class Snippet
 
     public function index($data)
     {
-        $id = $data['snippet_id'] ?? waf\db\ActiveRecord::INDEX_NOT_IN_DB;
+        $this->showDetails($data['snippet_id']);
+    }
+    
+    public function new()
+    {
+        $readOnly = false;
+        $this->showDetails(waf\db\ActiveRecord::INDEX_NOT_IN_DB, $readOnly);
+    }
+    
+    public function edit($urlParams)
+    {
+        $id = $urlParams['snippet_id'];
+        $readOnly = false;
+        $this->showDetails($id, $readOnly);
+    }
+    
+    private function showDetails($id, $readOnly=true)
+    {
 
         $user = waf\Session::getInstance()->currentUser;
 
         $view = new Main($user);
 
         if ($user) {
-            $html = $this->getSnippetDetailHtml($id);
+            $html = $this->getSnippetDetailHtml($id, $readOnly);
             $view->setContent($html);
-            $html = $this->getSnippetDetailScript();
+            $html = $this->getSnippetDetailScript($readOnly);
             $view->setScripts($html);
         }
 
         $view->render();
-
+        
     }
 
     public function create()
@@ -76,11 +93,11 @@ class Snippet
 
         $snippet->save();
 
-        $this->index(['snippet_id' => $snippet->getId()]);
+        $this->edit(['snippet_id' => $snippet->getId()]);
 
     }
 
-    private function getSnippetDetailHtml($id)
+    private function getSnippetDetailHtml($id, $readOnly)
     {
         $snippet = new SnippetModel($id);
         $baseUrl = Configuration::getInstance()->getBaseUrl();
@@ -108,15 +125,18 @@ class Snippet
             'languages' => $languages,
             'snippetLang' => $snippetLang,
             'tagsStr' => $tagsStr,
-            'baseUrl' => $baseUrl
+            'baseUrl' => $baseUrl,
+            'readOnly' => $readOnly
         ]);
     }
 
-    private function getSnippetDetailScript()
+    private function getSnippetDetailScript($readOnly)
     {
         $template = new waf\ui\Template('snippet_detail_js.html.php');
 
-        return $template->getHtml();
+        return $template->getHtml([
+            'readOnly' => $readOnly
+        ]);
     }
 
 }

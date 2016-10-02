@@ -2,3 +2,7 @@ vendor
 .idea
 ftpupload.list
 do_upload.sh
+.buildpath
+.project
+.settings
+composer.lock

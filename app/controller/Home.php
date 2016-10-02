@@ -44,9 +44,6 @@ class Home
     {
         $snippet = new Snippet($urlParams['snippet_id']);
         $snippet->delete();
-
-        $this->index();
-
     }
 
     public function signin()

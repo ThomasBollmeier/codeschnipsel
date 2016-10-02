@@ -2,6 +2,9 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+use tbollmeier\webappfound as waf;
+
+
 switch ($argc) {
     case 3:
         $email = $argv[1];
@@ -21,7 +24,10 @@ switch ($argc) {
 $config = new tbollmeier\codeschnipsel\config\Configuration();
 $dbConn = $config->getDbConnection();
 
+// Active reccord management needs to know the database connection:
+waf\db\ActiveRecord::setDbConnection($dbConn);
+
 $user = tbollmeier\codeschnipsel\model\User::create($email, $password, $name);
-$user->save($dbConn);
+$user->save();
 
 exit(0);

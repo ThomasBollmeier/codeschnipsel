@@ -50,12 +50,14 @@ $router = new waf\Router([
 
 $routesData = <<<DATA
 
-GET snippets/:snippet_id Snippet.index,
-GET new-snippet Snippet.index,
-GET snippets/delete/:snippet_id Home.delete,
+GET snippets Home.index,
 
+GET snippets/new Snippet.new,
 POST snippets Snippet.create,
+GET snippets/:snippet_id Snippet.index,
+GET snippets/:snippet_id/edit Snippet.edit,
 POST snippets/:snippet_id Snippet.update,
+DELETE snippets/:snippet_id Home.delete,
 
 POST signin Home.signin,
 POST signout Home.signout
