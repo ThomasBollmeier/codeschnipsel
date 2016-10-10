@@ -17,8 +17,8 @@
                         </td>
                         <td class="text-right">
                             <a href="<?= "$baseUrl/snippets/" . $snippet->getId() . "/edit" ?>"
-                                ><span class="glyphicon glyphicon-pencil"></span> 
-                            </a>
+                               class="btn btn-default"
+                               ><span class="glyphicon glyphicon-pencil"></span></a>
                             <a href="#"
                                class="snippet-delete btn btn-default"
                                data-snippet-id = "<?= $snippet->getId() ?>"
