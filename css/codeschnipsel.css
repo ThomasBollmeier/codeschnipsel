@@ -6,6 +6,10 @@
     margin-right: 5px;
 }
 
+.cs-button {
+    margin-left: 15px;
+}
+
 .cs-text-input {
     font-family: "Courier New", Courier;
     font-size: larger;

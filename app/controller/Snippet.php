@@ -18,14 +18,22 @@
 namespace tbollmeier\codeschnipsel\controller;
 
 use tbollmeier\webappfound as waf;
+use tbollmeier\codeschnipsel\auth\AuthInfo;
 use tbollmeier\codeschnipsel\config\Configuration;
 use tbollmeier\codeschnipsel\model\Snippet as SnippetModel;
 use tbollmeier\codeschnipsel\model\Language;
 use tbollmeier\codeschnipsel\view\Main;
 
 
-class Snippet
+class Snippet extends Controller
 {
+    
+    public function __construct()
+    {
+        parent::__construct();
+        
+        $this->setActionPublic('index');
+    }
 
     public function index($data)
     {
@@ -34,47 +42,64 @@ class Snippet
     
     public function new()
     {
-        $readOnly = false;
-        $this->showDetails(waf\db\ActiveRecord::INDEX_NOT_IN_DB, $readOnly);
+        if ($this->isUserAuthorized('new')) {
+            $readOnly = false;
+            $this->showDetails(waf\db\ActiveRecord::INDEX_NOT_IN_DB, $readOnly);            
+        } else {
+            (new Home())->index();
+        }
     }
     
     public function edit($urlParams)
     {
         $id = $urlParams['snippet_id'];
-        $readOnly = false;
+        $readOnly = !$this->isUserAuthorized('edit');
+        
         $this->showDetails($id, $readOnly);
+        
     }
     
     private function showDetails($id, $readOnly=true)
     {
+        // Does snippet (still) exist?
+        if (intval($id) !== waf\db\ActiveRecord::INDEX_NOT_IN_DB) {
+            $snippet = new SnippetModel($id);
+            if (!$snippet->isInDb()) {
+                (new Home())->page404(); 
+                return;
+            }
+        }
 
-        $user = waf\Session::getInstance()->currentUser;
+        $user = AuthInfo::getCurrentUser();
 
         $view = new Main($user);
 
-        if ($user) {
-            $html = $this->getSnippetDetailHtml($id, $readOnly);
-            $view->setContent($html);
-            $html = $this->getSnippetDetailScript($readOnly);
-            $view->setScripts($html);
-        }
-
+        $html = $this->getSnippetDetailHtml($id, $readOnly);
+        $view->setContent($html);
+        $html = $this->getSnippetDetailScript($readOnly);
+        $view->setScripts($html);
+        
         $view->render();
         
     }
 
     public function create()
     {
+        if (!$this->isUserAuthorized('create')) {
+            (new Home())->index();
+            return;
+        }
 
-        $session = waf\Session::getInstance();
+        $userId = AuthInfo::getCurrentUserId();
 
         $snippet = new SnippetModel();
         $snippet->title = $_POST['title'];
-        $snippet->authorId = $session->currentUser->getId();
+        $snippet->authorId = $userId;
         $snippet->code = $_POST['code'];
         $snippet->setLanguage($_POST['language']);
         $tagsStr = $_POST["tags"];
         $snippet->setTags($tagsStr);
+        $snippet->lastChangedAt = (new \DateTime())->format("Y-m-d H:i:s"); 
 
         $snippet->save();
 
@@ -83,6 +108,11 @@ class Snippet
 
     public function update($data)
     {
+        if (!$this->isUserAuthorized('update')) {
+            (new Home())->index();
+            return;
+        }
+
         $snippet = new SnippetModel($data['snippet_id']);
 
         $snippet->title = $_POST['title'];
@@ -90,6 +120,7 @@ class Snippet
         $snippet->setLanguage($_POST['language']);
         $tagsStr = $_POST['tags'];
         $snippet->setTags($tagsStr);
+        $snippet->lastChangedAt = (new \DateTime())->format("Y-m-d H:i:s");
 
         $snippet->save();
 
@@ -115,10 +146,13 @@ class Snippet
         $snippetLang = $snippet->getLanguage();
 
         $tagsStr = $snippet->getTags();
+        
+        $isEditAllowed = $this->isUserAuthorized('edit');
 
         $template = new waf\ui\Template('snippet_detail.html.php');
 
         return $template->getHtml([
+            'id' => $snippet->getId(),
             'title' => $snippet->title,
             'code' => $snippet->code,
             'action' => $action,
@@ -126,7 +160,8 @@ class Snippet
             'snippetLang' => $snippetLang,
             'tagsStr' => $tagsStr,
             'baseUrl' => $baseUrl,
-            'readOnly' => $readOnly
+            'readOnly' => $readOnly,
+            'isEditAllowed' => $isEditAllowed
         ]);
     }
 

@@ -60,7 +60,8 @@ class User extends ActiveRecord
 		$signedIn = password_verify($password, $this->passwordHash);
 		
 		if ($signedIn) {
-			Session::getInstance()->currentUser = $this;
+			$session = Session::getInstance();
+			$session->userId = $this->getId();
 		}
 		
 		return $signedIn;
@@ -73,9 +74,9 @@ class User extends ActiveRecord
 	
 	public function isSignedIn()
 	{
-		$currentUser = Session::getInstance()->currentUser;
+		$userId = Session::getInstance()->userId;
 		
-		return $this === $currentUser;
+		return $this->getId() === $userId;
 	}
 
     public function setPassword($password)

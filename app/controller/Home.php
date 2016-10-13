@@ -18,18 +18,29 @@
 namespace tbollmeier\codeschnipsel\controller;
 
 use tbollmeier\webappfound as waf;
+use tbollmeier\codeschnipsel\auth\AuthInfo;
 use tbollmeier\codeschnipsel\model\User;
-use tbollmeier\codeschnipsel\model\Snippet;
+use tbollmeier\codeschnipsel\model\Snippet as SnippetModel;
 use tbollmeier\codeschnipsel\view\Main;
 use tbollmeier\codeschnipsel\config\Configuration;
 
 
-class Home
+class Home extends Controller
 {
+    
+    public function __construct()
+    {
+        parent::__construct();
+        
+        $this->setActionPublic('index');
+        $this->setActionPublic('page404');
+        $this->setActionPublic('signin');
+        
+    }
 
     public function index()
     {
-        $user = waf\Session::getInstance()->currentUser;
+        $user = AuthInfo::getCurrentUser();
         $view = new Main($user);
 
         if ($user) {
@@ -39,10 +50,24 @@ class Home
 
         $view->render();
     }
+    
+    public function page404()
+    {
+        $view = new Main(AuthInfo::getCurrentUser());
+        
+        $template = new waf\ui\Template('page404.html.php');
+        $view->setContent($template->getHtml());
+        
+        $view->render();
+    }
 
     public function delete($urlParams)
     {
-        $snippet = new Snippet($urlParams['snippet_id']);
+        if (!$this->isUserAuthorized('delete')) {
+            return;
+        }
+        
+        $snippet = new SnippetModel($urlParams['snippet_id']);
         $snippet->delete();
     }
 
@@ -74,14 +99,16 @@ class Home
 
     public function signout()
     {
-        waf\Session::deleteInstance();
+        if ($this->isUserAuthorized('signout')) {
+            waf\Session::deleteInstance();
+        }
 
         $this->index();
     }
 
     private function getSnippetOverviewHtml($author)
     {
-        $snippets = Snippet::getAllOf($author);
+        $snippets = SnippetModel::getAllOf($author);
 
         $template = new waf\ui\Template('snippets_overview.html.php');
 

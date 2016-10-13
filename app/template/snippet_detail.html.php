@@ -41,8 +41,8 @@
             <div class="form-group">
                 <textarea id="editor"
                           name="code"
-                          rows="30"
                           cols="80"
+                          width="100%"
                           height="100%"
                           <?php if ($readOnly) { ?>
                           disabled
@@ -73,6 +73,15 @@
                     <input id="btn-file-upload"
                            type="file">
                 </label>
+                <a href="<?= "$baseUrl/snippets/" . $id ?>"
+                   class="btn btn-success cs-button"
+                   ><span class="glyphicon glyphicon-book"></span> Zum Lesemodus</a>
+            </div>
+            <?php } else if ($isEditAllowed) { ?>
+            <div class="form-group">
+                <a href="<?= "$baseUrl/snippets/" . $id . "/edit" ?>"
+                   class="btn btn-success"
+                   ><span class="glyphicon glyphicon-pencil"></span> Bearbeiten</a>
             </div>
             <?php } ?>
         </form>
@@ -80,5 +89,4 @@
     <div class="row">
         <a href="<?= $baseUrl ?>/#">Zurück zur Übersicht</a>
     </div>
-
 </div>
