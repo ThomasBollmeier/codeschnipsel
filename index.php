@@ -42,28 +42,29 @@ setupDatabase($config, waf\Session::getInstance());
 waf\ui\Template::setTemplateDir(__DIR__.'/app/template');
 
 // Setup routing
-$router = new waf\Router([
+$router = new waf\routing\Router([
     'controllerNS' => 'tbollmeier\\codeschnipsel\\controller',
-    'defaultCtrlAction' => 'Home.index',
     'baseUrl' => $config->getBaseUrl()
 ]);
 
-$routesData = <<<DATA
+$router->registerActionsFromDSL(<<<DSL
 
-GET snippets Home.index,
+(controller Home
+    (actions 
+        index [get /snippets :default]
+        delete [delete /snippets/:snippet_id(int)]
+        signin [post /signin]
+        signout [post /signout]))
 
-GET snippets/new Snippet.new,
-POST snippets Snippet.create,
-GET snippets/:snippet_id Snippet.index,
-GET snippets/:snippet_id/edit Snippet.edit,
-POST snippets/:snippet_id Snippet.update,
-DELETE snippets/:snippet_id Home.delete,
+(controller Snippet 
+    (actions 
+        new [get /snippets/new]
+        create [post /snippets]
+        index [get /snippets/:snippet_id(int)]
+        edit [get /snippets/:snippet_id(int)/edit]
+        update [post /snippets/:snippet_id(int)]))
 
-POST signin Home.signin,
-POST signout Home.signout
-
-DATA;
-
-$router->registerActions($routesData);
+DSL
+);
 
 $router->route($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
