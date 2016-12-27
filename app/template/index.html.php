@@ -57,36 +57,26 @@ $scripts
                     <a class="navbar-brand" href="<?= $baseUrl ?>/#">Codeschnipsel</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
+
                     <form class="navbar-form navbar-right"
                           method="post"
-                          action=<?= $currentUser ? "$baseUrl/signout" : "$baseUrl/signin"?> >
-                        
+                          action="<?= $currentUser ? "$baseUrl/signout" : "" ?>" >
+
                         <?php if (!$currentUser): ?>
-                    
-                        <div class="form-group">
-                            <input type="text"
-                                   name="email"
-                                   placeholder="Email"
-                                   class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <input type="password"
-                                   name="password"
-                                   placeholder="Password"
-                                   class="form-control">
-                        </div>
-                        <button type="submit"
-                                class="btn btn-success">Anmelden</button>
+                            <button type="button"
+                                    data-toggle="modal"
+                                    data-target="#signin-dialog"
+                                    class="btn btn-success">Anmelden</button>
 
                         <?php else: ?>
-                        
-                        <button type="submit"
-                                class="btn btn-success">Abmelden</button>
-                    
+                            <button type="submit"
+                                    class="btn btn-success">Abmelden</button>
                         <?php endif ?>
-                    </form>
+
                     <?php if ($currentUser): ?>
-                    
+
+                    </form>
+
                     <p class="cs-username navbar-text navbar-right"><?= $currentUser->name ?></p>
                 
                     <?php endif ?>
@@ -112,6 +102,52 @@ $scripts
         <script src="<?= $baseUrl ?>/js/codeschnipsel.js"></script>
 
         <?= $scripts ?>
+
+        <div id="signin-dialog"
+             class="modal fade"
+             tabindex="-1"
+             role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Anmeldung</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form"
+                              method="post"
+                              action="" >
+
+                            <div class="form-group">
+                                <label for="email">E-Post</label>
+                                <input id="email"
+                                       type="text"
+                                       name="email"
+                                       placeholder="E-Post"
+                                       class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Passwort</label>
+                                <input id="password"
+                                       type="password"
+                                       name="password"
+                                       placeholder="Password"
+                                       class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <button type="submit"
+                                        onclick="cs.onSigninClicked('<?= $baseUrl ?>')"
+                                        data-dismiss="modal"
+                                        class="btn btn-success">Anmelden</button>
+                            </div>
+                        </form>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
     
     </body>
 </html>

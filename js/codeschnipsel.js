@@ -4,6 +4,20 @@ var cs = (function () {
 
     return {
 
+        onSigninClicked: function(baseUrl) {
+
+            var email = $('#email').val(),
+                password = $('#password').val();
+
+            $.post(baseUrl + "/signin", {
+                email: email,
+                password: password
+            }).done(function() {
+                location.href = baseUrl;
+            });
+
+        },
+
         onSnippetDelete: function () {
 
             var snippetId = $(this).data('snippetId'),
