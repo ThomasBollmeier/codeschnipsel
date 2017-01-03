@@ -58,7 +58,7 @@ $router->registerActionsFromDSL(<<<DSL
 
 (controller Snippet 
     (actions 
-        new [get /snippets/new]
+        newSnippet [get /snippets/new]
         create [post /snippets]
         index [get /snippets/:snippet_id(int)]
         edit [get /snippets/:snippet_id(int)/edit]

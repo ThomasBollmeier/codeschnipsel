@@ -108,7 +108,7 @@ class Home extends Controller
 
     private function getSnippetOverviewHtml($author)
     {
-        $snippets = SnippetModel::getAllOf($author);
+        $snippets = SnippetModel::findByUser($author);
 
         $template = new waf\ui\Template('snippets_overview.html.php');
 

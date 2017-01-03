@@ -23,7 +23,7 @@ use tbollmeier\webappfound\db\ActiveRecord;
 class Snippet extends ActiveRecord
 {
 
-	public static function getAllOf(User $author)
+	public static function findByUser(User $author)
 	{
         $snippets = Snippet::query([
             'filter' => 'author_id = :author_id',
@@ -33,6 +33,29 @@ class Snippet extends ActiveRecord
 
         return $snippets;
 	}
+
+	public static function getPublicByTag($tag)
+    {
+        $sql = <<<SQL
+SELECT 
+  snippets.id,
+  snippets.title,
+  snippets.author_id,
+  snippets.code,
+  snippets.language_id,
+  snippets.is_public,
+  snippets.last_changed_at
+  FROM snippets
+  JOIN snippets_tags AS link
+  ON link.snippet_id = snippets.id
+  JOIN tags
+  ON tags.id = link.tag_id
+  WHERE is_public = 1
+    AND tags.name = :tag
+SQL;
+
+        return self::queryCustom($sql, [':tag' => $tag]);
+    }
 	
 	public function __construct($id=ActiveRecord::INDEX_NOT_IN_DB)
 	{
@@ -44,7 +67,11 @@ class Snippet extends ActiveRecord
             'authorId',
             [
                 'dbAlias' => 'author_id',
-                'pdoType' => \PDO::PARAM_INT
+                'pdoType' => \PDO::PARAM_INT,
+                'convFromDb' => function ($dbValue)
+                {
+                    return intval($dbValue);
+                }
             ]);
         $this->defineField('code');
         $this->defineField(
@@ -52,6 +79,20 @@ class Snippet extends ActiveRecord
             [
                 'dbAlias' => 'language_id',
                 'pdoType' => \PDO::PARAM_INT
+            ]);
+        $this->defineField(
+            'isPublic',
+            [
+                'dbAlias' => 'is_public',
+                'pdoType' => \PDO::PARAM_BOOL,
+                'convToDb' => function($value)
+                {
+                    return $value ? 1 : 0;
+                },
+                'convFromDb' => function($dbValue)
+                {
+                    return $dbValue == 1;
+                }
             ]);
         $this->defineField(
             'lastChangedAt',
@@ -83,6 +124,14 @@ class Snippet extends ActiveRecord
 	        $tag->delete();
         }
 
+    }
+
+    public function getAuthorName()
+    {
+        $user = new User($this->authorId);
+        $user->load();
+
+        return $user->name;
     }
 
 	public function getLanguage()
@@ -136,6 +185,15 @@ class Snippet extends ActiveRecord
 
         $this->tags = $tags;
 
+    }
+
+    public function isVisibleForUser($user) : bool
+    {
+        if ($user && $user->getId() === $this->authorId) {
+            return true;
+        } else {
+            return $this->isPublic;
+        }
     }
 
 }

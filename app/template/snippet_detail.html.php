@@ -15,9 +15,31 @@
                        size="80"
                        placeholder="Dein Titel">
                 <?php } else { ?>
-                <h2><?= $title ?></h2>
+                <h2>
+                    <?= $title ?>
+                    <?php if ($isPublic) {?>
+                        <span class="glyphicon glyphicon-globe"></span>
+                    <?php } else { ?>
+                        <span class="glyphicon glyphicon-lock"></span>
+                    <?php } ?>
+                </h2>
+                    <? if ($author) { ?>
+                        <p>erstellt von <em><?= $author ?></em></p>
+                    <?php } ?>
                 <?php } ?>
             </div>
+            <?php if (!$readOnly) {?>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox"
+                           name="isPublic"
+                           value="X"
+                           <?php if ($isPublic) {?>
+                               checked
+                           <?php }?>> öffentlich
+                </label>
+            </div>
+            <?php }?>
             <div class="form-group">
                 <label for="language"
                        class="cs-label">Sprache</label>

@@ -40,9 +40,9 @@ class Snippet extends Controller
         $this->showDetails($data['snippet_id']);
     }
     
-    public function new()
+    public function newSnippet()
     {
-        if ($this->isUserAuthorized('new')) {
+        if ($this->isUserAuthorized('newSnippet')) {
             $readOnly = false;
             $this->showDetails(waf\db\ActiveRecord::INDEX_NOT_IN_DB, $readOnly);            
         } else {
@@ -72,6 +72,11 @@ class Snippet extends Controller
 
         $user = AuthInfo::getCurrentUser();
 
+        if (!$snippet->isVisibleForUser($user)) {
+            (new Home())->page404();
+            return;
+        }
+
         $view = new Main($user);
 
         $html = $this->getSnippetDetailHtml($id, $readOnly);
@@ -94,6 +99,7 @@ class Snippet extends Controller
 
         $snippet = new SnippetModel();
         $snippet->title = $_POST['title'];
+        $snippet->isPublic = $this->getIsPublic();
         $snippet->authorId = $userId;
         $snippet->code = $_POST['code'];
         $snippet->setLanguage($_POST['language']);
@@ -116,6 +122,7 @@ class Snippet extends Controller
         $snippet = new SnippetModel($data['snippet_id']);
 
         $snippet->title = $_POST['title'];
+        $snippet->isPublic = $this->getIsPublic();
         $snippet->code = $_POST['code'];
         $snippet->setLanguage($_POST['language']);
         $tagsStr = $_POST['tags'];
@@ -126,6 +133,15 @@ class Snippet extends Controller
 
         $this->edit(['snippet_id' => $snippet->getId()]);
 
+    }
+
+    private function getIsPublic()
+    {
+        if (!empty($_POST['isPublic'])) {
+            return $_POST['isPublic'] == "X";
+        } else {
+            return false;
+        }
     }
 
     private function getSnippetDetailHtml($id, $readOnly)
@@ -147,13 +163,19 @@ class Snippet extends Controller
 
         $tagsStr = $snippet->getTags();
         
-        $isEditAllowed = $this->isUserAuthorized('edit');
+        $isEditAllowed = $this->isUserAuthorized('edit') &&
+            AuthInfo::getCurrentUserId() === $snippet->authorId;
+
+        $author = AuthInfo::getCurrentUserId() !== $snippet->authorId ?
+            $snippet->getAuthorName() : false;
 
         $template = new waf\ui\Template('snippet_detail.html.php');
 
         return $template->getHtml([
             'id' => $snippet->getId(),
             'title' => $snippet->title,
+            'isPublic' => $snippet->isPublic,
+            'author' => $author,
             'code' => $snippet->code,
             'action' => $action,
             'languages' => $languages,
