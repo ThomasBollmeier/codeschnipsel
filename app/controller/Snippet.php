@@ -61,20 +61,23 @@ class Snippet extends Controller
     
     private function showDetails($id, $readOnly=true)
     {
+        $user = AuthInfo::getCurrentUser();
+
         // Does snippet (still) exist?
         if (intval($id) !== waf\db\ActiveRecord::INDEX_NOT_IN_DB) {
+
             $snippet = new SnippetModel($id);
+
             if (!$snippet->isInDb()) {
                 (new Home())->page404(); 
                 return;
             }
-        }
 
-        $user = AuthInfo::getCurrentUser();
+            if (!$snippet->isVisibleForUser($user)) {
+                (new Home())->page404();
+                return;
+            }
 
-        if (!$snippet->isVisibleForUser($user)) {
-            (new Home())->page404();
-            return;
         }
 
         $view = new Main($user);
@@ -166,7 +169,7 @@ class Snippet extends Controller
         $isEditAllowed = $this->isUserAuthorized('edit') &&
             AuthInfo::getCurrentUserId() === $snippet->authorId;
 
-        $author = AuthInfo::getCurrentUserId() !== $snippet->authorId ?
+        $author = $snippet->authorId && AuthInfo::getCurrentUserId() !== $snippet->authorId ?
             $snippet->getAuthorName() : false;
 
         $template = new waf\ui\Template('snippet_detail.html.php');
