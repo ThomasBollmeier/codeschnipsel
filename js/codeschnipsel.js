@@ -69,6 +69,7 @@ var cs = (function () {
                 langModeMap = {
                     "C/C++" : "clike",
                     "Clojure": "clojure",
+                    "Erlang": "erlang",
                     "JavaScript" : "javascript",
                     "PHP": "php",
                     "Python": "python",

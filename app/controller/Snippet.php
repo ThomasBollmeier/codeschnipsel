@@ -162,6 +162,15 @@ class Snippet extends Controller
         }
 
         $languages = Language::query();
+        uasort($languages, function ($lang1, $lang2) {
+            if ($lang1->name < $lang2->name) {
+                return -1;
+            } elseif ($lang1->name > $lang2->name) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
         $snippetLang = $snippet->getLanguage();
 
         $tagsStr = $snippet->getTags();
